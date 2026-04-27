@@ -286,32 +286,69 @@
     // V1 — FUNCTIONAL
     // ═══════════════════════════════════════════════════════════════════════════
     function V1() {
-      const [card,setCard]        = useState(1);
-      const [selDay,setSelDay]    = useState(null); // full "YYYY-MM-DD" or null
-      const [typeF,setTypeF]      = useState("all");
-      const [exportOpen,setEx]    = useState(false);
-      const [cardSheet,setCS]     = useState(false);
-      const [calOpen,setCalOpen]  = useState(false);
-      const [calYear,setCalYear]  = useState(2026);
-      const [calMon,setCalMon]    = useState(3); // 0-indexed, April=3
+      const [card,setCard]           = useState(1);
+      const [selDay,setSelDay]       = useState(null); // full "YYYY-MM-DD" or null
+      const [typeF,setTypeF]         = useState("all");
+      const [exportOpen,setEx]       = useState(false);
+      const [cardSheet,setCS]        = useState(false);
+      const [calOpen,setCalOpen]     = useState(false);
+      const [calYear,setCalYear]     = useState(2026);
+      const [calMon,setCalMon]       = useState(3); // 0-indexed, April=3
+      const [weekStart,setWeekStart] = useState(new Date(2026,3,21)); // Apr 21
+      const swipeRef                 = useRef(null);
 
       const cardData   = CARDS.find(c=>c.id===card);
       const filtered   = TX.filter(t=>(typeF==="all"||t.type===typeF)&&(!selDay||t.date===selDay));
       const grouped    = groupByDate(filtered);
-      const maxSpend   = Math.max(...WEEK.map(w=>w.spend),1);
       const totalSpent = Math.abs(filtered.filter(t=>t.amount<0).reduce((a,t)=>a+t.amount,0));
 
-      // Calendar helpers
+      // Spend lookup by date
+      const spendByDate = useMemo(()=>{
+        const m={};
+        TX.forEach(t=>{ if(t.amount<0) m[t.date]=(m[t.date]||0)+Math.abs(t.amount); });
+        return m;
+      },[]);
+
+      // Shared helpers
       const MONTHS_JP = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
       const DOW_JP    = ["日","月","火","水","木","金","土"];
       const txDates   = new Set(TX.map(t=>t.date));
+      function pad(n){ return String(n).padStart(2,"0"); }
+
+      // Dynamic week strip from weekStart
+      const weekDays = useMemo(()=>Array.from({length:7},(_,i)=>{
+        const d=new Date(weekStart); d.setDate(d.getDate()+i);
+        const ds=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+        return {day:DOW_JP[d.getDay()],date:String(d.getDate()),ds,spend:spendByDate[ds]||0};
+      }),[weekStart,spendByDate]);
+      const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate()+6);
+      const maxSpend   = Math.max(...weekDays.map(w=>w.spend),1);
+      const weekLabel  = `${weekStart.getMonth()+1}月${weekStart.getDate()}日 – ${weekEnd.getMonth()+1}月${weekEnd.getDate()}日`;
+      function shiftWeek(dir){ setWeekStart(d=>{const n=new Date(d);n.setDate(n.getDate()+dir*7);return n;}); }
+
+      // Calendar grid from calYear/calMon
       const firstDOW  = new Date(calYear, calMon, 1).getDay();
       const daysInMon = new Date(calYear, calMon+1, 0).getDate();
       const calCells  = [...Array(firstDOW).fill(null), ...Array.from({length:daysInMon},(_,i)=>i+1)];
-      function pad(n){ return String(n).padStart(2,"0"); }
       function toDS(d){ return `${calYear}-${pad(calMon+1)}-${pad(d)}`; }
       function prevMon(){ if(calMon===0){setCalYear(y=>y-1);setCalMon(11);}else setCalMon(m=>m-1); }
       function nextMon(){ if(calMon===11){setCalYear(y=>y+1);setCalMon(0);}else setCalMon(m=>m+1); }
+
+      // Toggle calendar — sync month to current week on open
+      function toggleCal(){
+        if(!calOpen){ setCalYear(weekStart.getFullYear()); setCalMon(weekStart.getMonth()); }
+        setCalOpen(o=>!o);
+      }
+
+      // Swipe detection (touch + mouse)
+      function onSwipeStart(e){ swipeRef.current = e.touches?.[0]?.clientX ?? e.clientX; }
+      function onSwipeEnd(e, onLeft, onRight){
+        if(swipeRef.current===null) return;
+        const x = e.changedTouches?.[0]?.clientX ?? e.clientX;
+        const delta = x - swipeRef.current;
+        if(Math.abs(delta)>40){ delta<0 ? onLeft() : onRight(); }
+        swipeRef.current = null;
+      }
 
       return (
         <div style={{background:B.bg,minHeight:"100%",paddingBottom:100}}>
@@ -348,9 +385,9 @@
           <div style={{background:B.surface,borderBottom:`1px solid ${B.line}`}}>
 
             {/* Header row — tap to toggle */}
-            <div onClick={()=>setCalOpen(o=>!o)} style={{padding:"10px 16px 8px",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer"}}>
+            <div onClick={toggleCal} style={{padding:"10px 16px 8px",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer"}}>
               <span style={{fontSize:11,fontWeight:500,color:B.inkLight,letterSpacing:.3}}>
-                {calOpen ? `${calYear}年${MONTHS_JP[calMon]}` : "4月21日 – 27日"}
+                {calOpen ? `${calYear}年${MONTHS_JP[calMon]}` : weekLabel}
               </span>
               <div style={{display:"flex",alignItems:"center",gap:8}}>
                 {selDay&&!calOpen&&(
@@ -362,14 +399,20 @@
               </div>
             </div>
 
-            {/* Collapsed: week bar strip */}
+            {/* Collapsed: week bar strip — swipeable */}
             {!calOpen&&(
-              <div style={{display:"flex",gap:4,padding:"0 16px"}}>
-                {WEEK.map(w=>{
-                  const sel=selDay===`2026-04-${w.date}`, isToday=w.date==="27";
+              <div
+                onTouchStart={onSwipeStart}
+                onTouchEnd={e=>onSwipeEnd(e,()=>shiftWeek(1),()=>shiftWeek(-1))}
+                onMouseDown={onSwipeStart}
+                onMouseUp={e=>onSwipeEnd(e,()=>shiftWeek(1),()=>shiftWeek(-1))}
+                style={{display:"flex",gap:4,padding:"0 16px",userSelect:"none"}}
+              >
+                {weekDays.map(w=>{
+                  const sel=selDay===w.ds, isToday=w.ds==="2026-04-27";
                   const barH=Math.max(4,(w.spend/maxSpend)*32);
                   return (
-                    <button key={w.date} onClick={()=>setSelDay(sel?null:`2026-04-${w.date}`)} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3,background:"none",border:"none",padding:"0 0 10px"}}>
+                    <button key={w.ds} onClick={()=>setSelDay(sel?null:w.ds)} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3,background:"none",border:"none",padding:"0 0 10px"}}>
                       <div style={{width:"100%",height:36,display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
                         <div style={{width:"70%",borderRadius:"3px 3px 0 0",height:barH,background:sel?B.green:isToday?B.greenBorder:B.line,transition:"all 0.18s"}}/>
                       </div>
@@ -385,9 +428,15 @@
               </div>
             )}
 
-            {/* Expanded: full month calendar */}
+            {/* Expanded: full month calendar — swipeable */}
             {calOpen&&(
-              <div style={{padding:"0 16px 14px"}}>
+              <div
+                onTouchStart={onSwipeStart}
+                onTouchEnd={e=>onSwipeEnd(e,nextMon,prevMon)}
+                onMouseDown={onSwipeStart}
+                onMouseUp={e=>onSwipeEnd(e,nextMon,prevMon)}
+                style={{padding:"0 16px 14px",userSelect:"none"}}
+              >
                 {/* Month navigator */}
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
                   <button onClick={e=>{e.stopPropagation();prevMon();}} style={{width:32,height:32,borderRadius:8,border:"none",background:B.raised,display:"flex",alignItems:"center",justifyContent:"center"}}>
