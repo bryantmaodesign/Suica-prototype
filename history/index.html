@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Suica — History Preview</title>
+  <title>Suica — 利用履歴</title>
 
   <!-- Module resolution via esm.sh — no UMD globals, no 404 risk -->
   <script type="importmap">
@@ -74,47 +74,47 @@
       bsm: "0 4px 12px rgba(0,131,62,0.10)",
     };
 
-    const FF = "-apple-system, 'Inter', sans-serif";
+    const FF = "'Hiragino Sans', 'Noto Sans JP', -apple-system, sans-serif";
 
     // ─── Shared data ───────────────────────────────────────────────────────────
     const CARDS = [
-      { id:1, name:"My Suica",   last:"0012", balance:4280  },
-      { id:2, name:"Work Suica", last:"8821", balance:12050 },
+      { id:1, name:"マイSuica",   last:"0012", balance:4280  },
+      { id:2, name:"仕事用Suica", last:"8821", balance:12050 },
     ];
 
     const TX = [
-      { id:1,  date:"2026-04-27", time:"08:12", type:"transport", label:"Shinjuku → Shibuya",  sub:"JR Yamanote Line",       amount:-210,  bal:4280,  pts:0,   station:"Shibuya"   },
-      { id:2,  date:"2026-04-27", time:"13:44", type:"purchase",  label:"7-Eleven",             sub:"Convenience Store",      amount:-543,  bal:4490,  pts:5,   station:"Shibuya"   },
-      { id:3,  date:"2026-04-26", time:"19:20", type:"jre",       label:"JRE Points Earned",    sub:"Shopping reward",        amount:0,     bal:5033,  pts:120, station:"Tokyo"     },
-      { id:4,  date:"2026-04-26", time:"09:05", type:"transport", label:"Tokyo → Akihabara",    sub:"JR Chuo Line",           amount:-170,  bal:5033,  pts:0,   station:"Akihabara" },
-      { id:5,  date:"2026-04-25", time:"18:33", type:"tappay",    label:"Received from Keiko",  sub:"Tappay transfer",        amount:3000,  bal:5203,  pts:0,   station:"Shinjuku"  },
-      { id:6,  date:"2026-04-25", time:"12:10", type:"purchase",  label:"Lawson",               sub:"Convenience Store",      amount:-890,  bal:2203,  pts:8,   station:"Shinjuku"  },
-      { id:7,  date:"2026-04-24", time:"08:01", type:"transport", label:"Ueno → Ikebukuro",     sub:"Tokyo Metro Marunouchi", amount:-240,  bal:3093,  pts:0,   station:"Ikebukuro" },
-      { id:8,  date:"2026-04-24", time:"15:22", type:"purchase",  label:"Excelsior Café",       sub:"Café",                   amount:-620,  bal:3333,  pts:6,   station:"Ikebukuro" },
-      { id:9,  date:"2026-04-23", time:"11:00", type:"jre",       label:"JRE Points Redeemed",  sub:"Converted to balance",   amount:500,   bal:3953,  pts:-50, station:"Tokyo"     },
-      { id:10, date:"2026-04-23", time:"10:45", type:"tappay",    label:"Tappay Top-up",        sub:"Linked bank account",    amount:5000,  bal:3453,  pts:0,   station:"Tokyo"     },
-      { id:11, date:"2026-04-22", time:"07:58", type:"transport", label:"Harajuku → Ebisu",     sub:"JR Yamanote Line",       amount:-170,  bal:1547,  pts:0,   station:"Ebisu"     },
-      { id:12, date:"2026-04-22", time:"13:30", type:"purchase",  label:"NewDays Kiosk",        sub:"Station Shop",           amount:-340,  bal:1717,  pts:3,   station:"Ebisu"     },
-      { id:13, date:"2026-04-21", time:"08:03", type:"transport", label:"Shinjuku → Tachikawa", sub:"JR Chuo Line Rapid",     amount:-398,  bal:2057,  pts:0,   station:"Tachikawa" },
-      { id:14, date:"2026-04-21", time:"17:45", type:"purchase",  label:"MUJI Tachikawa",       sub:"Retail",                 amount:-2400, bal:2455,  pts:24,  station:"Tachikawa" },
+      { id:1,  date:"2026-04-27", time:"08:12", type:"transport", label:"新宿 → 渋谷",            sub:"JR山手線",               amount:-210,  bal:4280,  pts:0,   station:"Shibuya"   },
+      { id:2,  date:"2026-04-27", time:"13:44", type:"purchase",  label:"セブン‐イレブン",         sub:"コンビニ",               amount:-543,  bal:4490,  pts:5,   station:"Shibuya"   },
+      { id:3,  date:"2026-04-26", time:"19:20", type:"jre",       label:"JREポイント獲得",         sub:"ショッピング特典",        amount:0,     bal:5033,  pts:120, station:"Tokyo"     },
+      { id:4,  date:"2026-04-26", time:"09:05", type:"transport", label:"東京 → 秋葉原",           sub:"JR中央線",               amount:-170,  bal:5033,  pts:0,   station:"Akihabara" },
+      { id:5,  date:"2026-04-25", time:"18:33", type:"tappay",    label:"けいこさんから受け取り",  sub:"Tappay送金",             amount:3000,  bal:5203,  pts:0,   station:"Shinjuku"  },
+      { id:6,  date:"2026-04-25", time:"12:10", type:"purchase",  label:"ローソン",               sub:"コンビニ",               amount:-890,  bal:2203,  pts:8,   station:"Shinjuku"  },
+      { id:7,  date:"2026-04-24", time:"08:01", type:"transport", label:"上野 → 池袋",            sub:"東京メトロ丸ノ内線",      amount:-240,  bal:3093,  pts:0,   station:"Ikebukuro" },
+      { id:8,  date:"2026-04-24", time:"15:22", type:"purchase",  label:"エクセルシオール カフェ", sub:"カフェ",                 amount:-620,  bal:3333,  pts:6,   station:"Ikebukuro" },
+      { id:9,  date:"2026-04-23", time:"11:00", type:"jre",       label:"JREポイント利用",         sub:"残高へ変換",             amount:500,   bal:3953,  pts:-50, station:"Tokyo"     },
+      { id:10, date:"2026-04-23", time:"10:45", type:"tappay",    label:"Tappayチャージ",          sub:"登録銀行口座",           amount:5000,  bal:3453,  pts:0,   station:"Tokyo"     },
+      { id:11, date:"2026-04-22", time:"07:58", type:"transport", label:"原宿 → 恵比寿",           sub:"JR山手線",               amount:-170,  bal:1547,  pts:0,   station:"Ebisu"     },
+      { id:12, date:"2026-04-22", time:"13:30", type:"purchase",  label:"NewDays",               sub:"駅構内ショップ",          amount:-340,  bal:1717,  pts:3,   station:"Ebisu"     },
+      { id:13, date:"2026-04-21", time:"08:03", type:"transport", label:"新宿 → 立川",            sub:"JR中央線快速",           amount:-398,  bal:2057,  pts:0,   station:"Tachikawa" },
+      { id:14, date:"2026-04-21", time:"17:45", type:"purchase",  label:"無印良品 立川",           sub:"小売",                   amount:-2400, bal:2455,  pts:24,  station:"Tachikawa" },
     ];
 
     const TYPE_CFG = {
-      transport: { Icon:Train,          label:"Transport",  color:B.blue,  tint:B.blueTint  },
-      purchase:  { Icon:ShoppingBag,    label:"Purchase",   color:B.red,   tint:B.redTint   },
-      jre:       { Icon:Star,           label:"JRE Points", color:B.amber, tint:B.amberTint },
-      tappay:    { Icon:ArrowLeftRight, label:"Tappay",     color:B.green, tint:B.greenTint },
+      transport: { Icon:Train,          label:"交通",         color:B.blue,  tint:B.blueTint  },
+      purchase:  { Icon:ShoppingBag,    label:"お買い物",     color:B.red,   tint:B.redTint   },
+      jre:       { Icon:Star,           label:"JREポイント",  color:B.amber, tint:B.amberTint },
+      tappay:    { Icon:ArrowLeftRight, label:"Tappay",      color:B.green, tint:B.greenTint },
     };
 
     const MONTHLY = [
-      {m:"Nov",v:8200},{m:"Dec",v:11400},{m:"Jan",v:7100},
-      {m:"Feb",v:9300},{m:"Mar",v:10600},{m:"Apr",v:4980},
+      {m:"11月",v:8200},{m:"12月",v:11400},{m:"1月",v:7100},
+      {m:"2月",v:9300},{m:"3月",v:10600},{m:"4月",v:4980},
     ];
     const WEEK = [
-      {day:"Mon",date:"21",spend:2798},{day:"Tue",date:"22",spend:510},
-      {day:"Wed",date:"23",spend:0},   {day:"Thu",date:"24",spend:860},
-      {day:"Fri",date:"25",spend:890}, {day:"Sat",date:"26",spend:170},
-      {day:"Mon",date:"27",spend:753},
+      {day:"月",date:"21",spend:2798},{day:"火",date:"22",spend:510},
+      {day:"水",date:"23",spend:0},   {day:"木",date:"24",spend:860},
+      {day:"金",date:"25",spend:890}, {day:"土",date:"26",spend:170},
+      {day:"月",date:"27",spend:753},
     ];
 
     const STATIONS = {
@@ -145,9 +145,9 @@
     }
     function relDate(ds) {
       const diff = Math.round((new Date("2026-04-27") - new Date(ds)) / 86400000);
-      if (diff===0) return "Today";
-      if (diff===1) return "Yesterday";
-      return new Date(ds+"T00:00:00").toLocaleDateString("en-US",{weekday:"long",month:"short",day:"numeric"});
+      if (diff===0) return "今日";
+      if (diff===1) return "昨日";
+      return new Date(ds+"T00:00:00").toLocaleDateString("ja-JP",{month:"long",day:"numeric",weekday:"long"});
     }
     function fmtAmt(t) {
       if (t.amount===0) return `${t.pts>0?"+":""}${t.pts} pt`;
@@ -177,7 +177,7 @@
               <Train size={13} color="#fff" strokeWidth={2.5}/>
             </div>
             <span style={{fontSize:13,fontWeight:700,color:B.ink,marginRight:"auto",letterSpacing:-.3}}>Suica</span>
-            {[[1,"Functional"],[2,"Insights"],[3,"Map View"]].map(([n,lbl])=>(
+            {[[1,"リスト"],[2,"分析"],[3,"マップ"]].map(([n,lbl])=>(
               <button key={n} onClick={()=>setV(n)} style={{
                 padding:"5px 14px",borderRadius:24,border:"none",
                 fontSize:12,fontWeight:600,transition:"all 0.15s",
@@ -208,8 +208,8 @@
           }}>
             <div style={{padding:"12px 20px 4px"}}>
               <div style={{width:36,height:4,borderRadius:2,background:B.line,margin:"0 auto 16px"}}/>
-              <div style={{fontSize:15,fontWeight:700,color:B.ink,marginBottom:2}}>My Suica Cards</div>
-              <div style={{fontSize:13,color:B.silver,marginBottom:12}}>Choose a card to view its history</div>
+              <div style={{fontSize:15,fontWeight:700,color:B.ink,marginBottom:2}}>Suicaカード</div>
+              <div style={{fontSize:13,color:B.silver,marginBottom:12}}>履歴を確認するカードを選択</div>
             </div>
             {CARDS.map(c=>{
               const sel = c.id===card;
@@ -256,10 +256,10 @@
           }}>
             <div style={{padding:"12px 20px 0"}}>
               <div style={{width:36,height:4,borderRadius:2,background:B.line,margin:"0 auto 16px"}}/>
-              <div style={{fontSize:15,fontWeight:700,color:B.ink,marginBottom:2}}>Export History</div>
-              <div style={{fontSize:13,color:B.silver,marginBottom:16}}>Choose a date range and format</div>
+              <div style={{fontSize:15,fontWeight:700,color:B.ink,marginBottom:2}}>履歴のエクスポート</div>
+              <div style={{fontSize:13,color:B.silver,marginBottom:16}}>期間とフォーマットを選択</div>
               <div style={{display:"flex",gap:6,marginBottom:20}}>
-                {[["week","This week"],["month","This month"],["3m","3 months"],["all","All time"]].map(([k,l])=>(
+                {[["week","今週"],["month","今月"],["3m","3ヶ月"],["all","すべて"]].map(([k,l])=>(
                   <button key={k} onClick={()=>setRange(k)} style={{
                     flex:1,padding:"7px 4px",borderRadius:24,fontSize:11,fontWeight:500,
                     border:"none",transition:"all 0.15s",
@@ -332,8 +332,8 @@
           {/* Week strip */}
           <div style={{background:B.surface,padding:"10px 16px 0",borderBottom:`1px solid ${B.line}`}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
-              <span style={{fontSize:11,fontWeight:500,color:B.inkLight,letterSpacing:.3}}>APR 21 – 27</span>
-              {selDay&&<button onClick={()=>setSelDay(null)} style={{display:"flex",alignItems:"center",gap:3,background:"none",border:"none",color:B.silver,fontSize:11}}><X size={11}/> Clear</button>}
+              <span style={{fontSize:11,fontWeight:500,color:B.inkLight,letterSpacing:.3}}>4月21日 – 27日</span>
+              {selDay&&<button onClick={()=>setSelDay(null)} style={{display:"flex",alignItems:"center",gap:3,background:"none",border:"none",color:B.silver,fontSize:11}}><X size={11}/> クリア</button>}
             </div>
             <div style={{display:"flex",gap:4}}>
               {WEEK.map(w=>{
@@ -359,19 +359,19 @@
           {/* Type filter */}
           <div style={{background:B.surface,padding:"10px 16px",borderBottom:`1px solid ${B.line}`}}>
             <div className="filter-scroll" style={{display:"flex",gap:6,overflowX:"auto"}}>
-              {[["all","All"],["transport","Train"],["purchase","Shop"],["jre","Points"],["tappay","Pay"]].map(([k,l])=>(
+              {[["all","すべて"],["transport","交通"],["purchase","お買い物"],["jre","ポイント"],["tappay","送金"]].map(([k,l])=>(
                 <button key={k} onClick={()=>setTypeF(k)} style={{padding:"8px 16px",borderRadius:24,border:"none",fontSize:13,fontWeight:500,flexShrink:0,transition:"all 0.15s",background:typeF===k?B.green:B.raised,color:typeF===k?"#fff":B.inkLight}}>{l}</button>
               ))}
             </div>
           </div>
 
           <div style={{padding:"10px 16px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-            <span style={{fontSize:13,color:B.silver}}>{selDay?`Apr ${selDay}`:"April 2026"} · {filtered.length} transactions</span>
-            <span style={{fontSize:13,fontWeight:600,color:B.ink}}>¥{totalSpent.toLocaleString()} spent</span>
+            <span style={{fontSize:13,color:B.silver}}>{selDay?`4月${selDay}日`:"2026年4月"} · {filtered.length}件</span>
+            <span style={{fontSize:13,fontWeight:600,color:B.ink}}>¥{totalSpent.toLocaleString()} 利用</span>
           </div>
 
           <div style={{padding:"0 16px"}}>
-            {grouped.length===0&&<div style={{textAlign:"center",padding:48,color:B.silver,fontSize:13}}>No transactions</div>}
+            {grouped.length===0&&<div style={{textAlign:"center",padding:48,color:B.silver,fontSize:13}}>取引なし</div>}
             {grouped.map(([date,txns])=>(
               <div key={date} style={{marginBottom:4}}>
                 <div style={{fontSize:11,fontWeight:500,color:B.silver,padding:"12px 2px 6px",letterSpacing:.4,textTransform:"uppercase"}}>{relDate(date)}</div>
@@ -460,21 +460,21 @@
               </button>
             </div>
             <div style={{background:"rgba(0,0,0,.18)",borderRadius:8,padding:3,display:"flex",gap:2,marginBottom:20}}>
-              {[["today","Today"],["week","Week"],["month","Month"],["3m","3 Months"]].map(([k,l])=>(
+              {[["today","今日"],["week","今週"],["month","今月"],["3m","3ヶ月"]].map(([k,l])=>(
                 <button key={k} onClick={()=>setPer(k)} style={{flex:1,padding:"6px 4px",borderRadius:6,border:"none",background:period===k?"rgba(255,255,255,.96)":"transparent",color:period===k?B.green:"rgba(255,255,255,.6)",fontSize:11,fontWeight:period===k?600:400,transition:"all 0.18s"}}>{l}</button>
               ))}
             </div>
-            <div style={{fontSize:11,color:"rgba(255,255,255,.6)",fontWeight:500,letterSpacing:.4,marginBottom:4}}>TOTAL SPENT THIS WEEK</div>
+            <div style={{fontSize:11,color:"rgba(255,255,255,.6)",fontWeight:500,letterSpacing:.4,marginBottom:4}}>今週の支出合計</div>
             <div style={{fontSize:34,fontWeight:700,color:"#fff",letterSpacing:-1,lineHeight:1}}>¥{spent.toLocaleString()}</div>
             <div style={{display:"flex",alignItems:"center",gap:4,marginTop:6}}>
               <TrendingDown size={13} color="rgba(255,255,255,.6)"/>
-              <span style={{fontSize:11,color:"rgba(255,255,255,.6)"}}>¥{income.toLocaleString()} received · {pts} pts earned</span>
+              <span style={{fontSize:11,color:"rgba(255,255,255,.6)"}}>¥{income.toLocaleString()} 受け取り · {pts}pt 獲得</span>
             </div>
           </div>
 
           {/* Tab bar */}
           <div style={{background:B.surface,borderBottom:`1px solid ${B.line}`,display:"flex",position:"sticky",top:0,zIndex:50}}>
-            {[["insights","Insights"],["transactions","Transactions"]].map(([k,l])=>(
+            {[["insights","分析"],["transactions","明細"]].map(([k,l])=>(
               <button key={k} onClick={()=>setTab(k)} style={{
                 flex:1,padding:"13px 0",border:"none",background:"none",
                 borderBottom:tab===k?`2px solid ${B.green}`:"2px solid transparent",
@@ -490,7 +490,7 @@
 
               {/* KPI tiles */}
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-                {[{label:"Transactions",value:txCount,sub:"this week",Icon:List,color:B.blue},{label:"JRE Points",value:`+${pts}`,sub:"earned",Icon:Star,color:B.amber}].map(({label,value,sub,Icon,color})=>(
+                {[{label:"取引件数",value:txCount,sub:"今週",Icon:List,color:B.blue},{label:"JREポイント",value:`+${pts}`,sub:"獲得",Icon:Star,color:B.amber}].map(({label,value,sub,Icon,color})=>(
                   <div key={label} style={{background:B.surface,borderRadius:16,padding:"14px 16px",border:`1px solid ${B.line}`,boxShadow:S.xs}}>
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
                       <span style={{fontSize:11,color:B.silver,fontWeight:400}}>{label}</span>
@@ -506,12 +506,12 @@
               <div style={{background:B.surface,borderRadius:16,padding:"16px 18px",border:`1px solid ${B.line}`,boxShadow:S.xs}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
                   <div>
-                    <div style={{fontSize:13,fontWeight:600,color:B.ink}}>Balance</div>
-                    <div style={{fontSize:11,color:B.silver,marginTop:2}}>Last 8 transactions</div>
+                    <div style={{fontSize:13,fontWeight:600,color:B.ink}}>残高推移</div>
+                    <div style={{fontSize:11,color:B.silver,marginTop:2}}>直近8件の取引</div>
                   </div>
                   <div style={{textAlign:"right"}}>
                     <div style={{fontSize:20,fontWeight:700,color:B.ink}}>¥{cardData.balance.toLocaleString()}</div>
-                    <div style={{fontSize:11,color:B.green,fontWeight:500,display:"flex",alignItems:"center",gap:2,justifyContent:"flex-end"}}><TrendingUp size={11}/> Current</div>
+                    <div style={{fontSize:11,color:B.green,fontWeight:500,display:"flex",alignItems:"center",gap:2,justifyContent:"flex-end"}}><TrendingUp size={11}/> 現在</div>
                   </div>
                 </div>
                 <svg width="100%" viewBox={`0 0 ${SW} ${SH+6}`} style={{height:54,overflow:"visible"}} preserveAspectRatio="none">
@@ -524,7 +524,7 @@
 
               {/* Daily bars */}
               <div style={{background:B.surface,borderRadius:16,padding:"16px 18px",border:`1px solid ${B.line}`,boxShadow:S.xs}}>
-                <div style={{fontSize:13,fontWeight:600,color:B.ink,marginBottom:14}}>Daily spending · This week</div>
+                <div style={{fontSize:13,fontWeight:600,color:B.ink,marginBottom:14}}>日別支出 · 今週</div>
                 <div style={{display:"flex",alignItems:"flex-end",gap:6,height:80}}>
                   {WEEK.map(w=>{const h=Math.max(4,(w.spend/maxWeek)*64),isToday=w.date==="27";return(
                     <div key={w.date} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
@@ -538,8 +538,8 @@
 
               {/* Donut */}
               <div style={{background:B.surface,borderRadius:16,padding:"16px 18px",border:`1px solid ${B.line}`,boxShadow:S.xs}}>
-                <div style={{fontSize:13,fontWeight:600,color:B.ink,marginBottom:4}}>Category breakdown</div>
-                <div style={{fontSize:11,color:B.silver,marginBottom:14}}>April 2026</div>
+                <div style={{fontSize:13,fontWeight:600,color:B.ink,marginBottom:4}}>カテゴリ別内訳</div>
+                <div style={{fontSize:11,color:B.silver,marginBottom:14}}>2026年4月</div>
                 {(()=>{
                   const R=54,CX=70,CY=70,stroke=18,circ=2*Math.PI*R;
                   let off=0;
@@ -549,7 +549,7 @@
                       <svg width={140} height={140} viewBox="0 0 140 140" style={{flexShrink:0}}>
                         {slices.map((s,i)=>(<circle key={i} cx={CX} cy={CY} r={R} fill="none" stroke={s.color} strokeWidth={stroke} strokeDasharray={`${s.dash} ${circ-s.dash}`} strokeDashoffset={-s.off} style={{transform:"rotate(-90deg)",transformOrigin:"70px 70px"}}/>))}
                         <text x={CX} y={CY-6} textAnchor="middle" style={{fontSize:17,fontWeight:700,fill:B.ink}}>¥{(typeTotal/1000).toFixed(1)}k</text>
-                        <text x={CX} y={CY+11} textAnchor="middle" style={{fontSize:9,fill:B.silver}}>total spent</text>
+                        <text x={CX} y={CY+11} textAnchor="middle" style={{fontSize:9,fill:B.silver}}>支出合計</text>
                       </svg>
                       <div style={{flex:1,display:"flex",flexDirection:"column",gap:10}}>
                         {byType.map(b=>(
@@ -569,8 +569,8 @@
 
               {/* Monthly trend */}
               <div style={{background:B.surface,borderRadius:16,padding:"16px 18px",border:`1px solid ${B.line}`,boxShadow:S.xs}}>
-                <div style={{fontSize:13,fontWeight:600,color:B.ink,marginBottom:4}}>6-month trend</div>
-                <div style={{fontSize:11,color:B.silver,marginBottom:14}}>Monthly total spend</div>
+                <div style={{fontSize:13,fontWeight:600,color:B.ink,marginBottom:4}}>6ヶ月推移</div>
+                <div style={{fontSize:11,color:B.silver,marginBottom:14}}>月別支出合計</div>
                 <div style={{display:"flex",alignItems:"flex-end",gap:8,height:72}}>
                   {MONTHLY.map(m=>{const h=Math.max(4,(m.v/maxMonth)*58),isCur=m.m==="Apr";return(
                     <div key={m.m} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:5}}>
@@ -589,7 +589,7 @@
               {/* Filter */}
               <div style={{background:B.surface,padding:"10px 16px",borderBottom:`1px solid ${B.line}`}}>
                 <div className="filter-scroll" style={{display:"flex",gap:6,overflowX:"auto"}}>
-                  {[["all","All"],["transport","Train"],["purchase","Shop"],["jre","Points"],["tappay","Pay"]].map(([k,l])=>(
+                  {[["all","すべて"],["transport","交通"],["purchase","お買い物"],["jre","ポイント"],["tappay","送金"]].map(([k,l])=>(
                     <button key={k} onClick={()=>setTypeF(k)} style={{padding:"8px 16px",borderRadius:24,border:"none",fontSize:13,fontWeight:500,flexShrink:0,transition:"all 0.15s",background:typeF===k?B.green:B.raised,color:typeF===k?"#fff":B.inkLight}}>{l}</button>
                   ))}
                 </div>
@@ -813,7 +813,7 @@
 
           {/* Filter pills */}
           <div className="filter-scroll" style={{position:"absolute",top:72,left:0,right:0,zIndex:20,padding:"0 14px",display:"flex",gap:6,overflowX:"auto"}}>
-            {[["all","All"],["transport","Train"],["purchase","Shop"],["jre","Points"],["tappay","Pay"]].map(([k,l])=>(
+            {[["all","すべて"],["transport","交通"],["purchase","お買い物"],["jre","ポイント"],["tappay","送金"]].map(([k,l])=>(
               <button key={k} onClick={()=>{setTypeF(k);setSel(null);setSheet("peek");}} style={{padding:"8px 16px",borderRadius:24,border:"none",fontSize:13,fontWeight:500,flexShrink:0,transition:"all 0.15s",background:typeF===k?B.green:B.surface,color:typeF===k?"#fff":B.inkLight,boxShadow:S.md}}>{l}</button>
             ))}
           </div>
@@ -835,7 +835,7 @@
                     <div style={{width:36,height:36,borderRadius:12,background:B.greenTint,display:"flex",alignItems:"center",justifyContent:"center"}}><MapPin size={16} color={B.green} strokeWidth={2}/></div>
                     <div>
                       <div style={{fontSize:15,fontWeight:700,color:B.ink,letterSpacing:-.3}}>{selStation}</div>
-                      <div style={{fontSize:11,color:B.silver,marginTop:1}}>{selTx.length} transactions{selSpent>0?` · ¥${selSpent.toLocaleString()} spent`:""}</div>
+                      <div style={{fontSize:11,color:B.silver,marginTop:1}}>{selTx.length}件{selSpent>0?` · ¥${selSpent.toLocaleString()} 利用`:""}</div>
                     </div>
                   </div>
                   <button onClick={e=>{e.stopPropagation();setSel(null);setSheet("peek");}} style={{width:28,height:28,borderRadius:"50%",background:B.raised,border:"none",display:"flex",alignItems:"center",justifyContent:"center"}}><X size={13} color={B.inkLight} strokeWidth={2.5}/></button>
@@ -843,8 +843,8 @@
               ):(
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",paddingBottom:10,borderBottom:`1px solid ${B.line}`}}>
                   <div>
-                    <div style={{fontSize:15,fontWeight:700,color:B.ink,letterSpacing:-.3}}>{Object.keys(stationMap).length} stations visited</div>
-                    <div style={{fontSize:11,color:B.silver,marginTop:1}}>{filtered.length} transactions · April 2026</div>
+                    <div style={{fontSize:15,fontWeight:700,color:B.ink,letterSpacing:-.3}}>{Object.keys(stationMap).length}駅を利用</div>
+                    <div style={{fontSize:11,color:B.silver,marginTop:1}}>{filtered.length}件 · 2026年4月</div>
                   </div>
                   <ChevronUp size={18} color={B.silver} strokeWidth={2} style={{transform:sheetState==="full"?"rotate(180deg)":"none",transition:"transform 0.28s"}}/>
                 </div>
@@ -857,7 +857,7 @@
                   {Object.entries(stationMap).slice(0,4).map(([name,txns])=>(
                     <button key={name} onClick={()=>tapPin(name)} style={{flex:1,padding:"7px 6px",borderRadius:8,border:`1px solid ${B.line}`,background:B.surface,textAlign:"center",boxShadow:S.xs}}>
                       <div style={{fontSize:11,fontWeight:600,color:B.ink,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{name}</div>
-                      <div style={{fontSize:11,color:B.silver,marginTop:2}}>{txns.length} tx</div>
+                      <div style={{fontSize:11,color:B.silver,marginTop:2}}>{txns.length}件</div>
                     </button>
                   ))}
                 </div>
@@ -874,7 +874,7 @@
               )}
               {sheetState!=="peek"&&!selStation&&(
                 <>
-                  <div style={{fontSize:11,fontWeight:500,color:B.silver,letterSpacing:.4,marginTop:12,marginBottom:8,textTransform:"uppercase"}}>All transactions</div>
+                  <div style={{fontSize:11,fontWeight:500,color:B.silver,letterSpacing:.4,marginTop:12,marginBottom:8,textTransform:"uppercase"}}>すべての取引</div>
                   {overviewGroups.map(([date,txns])=>(
                     <div key={date}>
                       <div style={{fontSize:11,color:B.silver,padding:"8px 0 4px",fontWeight:500}}>{relDate(date)}</div>
