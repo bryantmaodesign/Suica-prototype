@@ -40,7 +40,7 @@
     import { createRoot } from "react-dom/client";
     import {
       Train, ShoppingBag, Star, ArrowLeftRight,
-      Upload, ChevronRight, ChevronUp, ChevronDown, X,
+      Upload, ChevronRight, ChevronLeft, ChevronUp, ChevronDown, X,
       TrendingUp, TrendingDown, CreditCard,
       MapPin, List, Navigation, Clock, BarChart3
     } from "lucide-react";
@@ -286,17 +286,32 @@
     // V1 — FUNCTIONAL
     // ═══════════════════════════════════════════════════════════════════════════
     function V1() {
-      const [card,setCard]      = useState(1);
-      const [selDay,setSelDay]   = useState(null);
-      const [typeF,setTypeF]     = useState("all");
-      const [exportOpen,setEx]   = useState(false);
-      const [cardSheet,setCS]    = useState(false);
+      const [card,setCard]        = useState(1);
+      const [selDay,setSelDay]    = useState(null); // full "YYYY-MM-DD" or null
+      const [typeF,setTypeF]      = useState("all");
+      const [exportOpen,setEx]    = useState(false);
+      const [cardSheet,setCS]     = useState(false);
+      const [calOpen,setCalOpen]  = useState(false);
+      const [calYear,setCalYear]  = useState(2026);
+      const [calMon,setCalMon]    = useState(3); // 0-indexed, April=3
 
       const cardData   = CARDS.find(c=>c.id===card);
-      const filtered   = TX.filter(t=>(typeF==="all"||t.type===typeF)&&(!selDay||t.date.endsWith(selDay)));
-      const grouped   = groupByDate(filtered);
-      const maxSpend  = Math.max(...WEEK.map(w=>w.spend),1);
-      const totalSpent= Math.abs(filtered.filter(t=>t.amount<0).reduce((a,t)=>a+t.amount,0));
+      const filtered   = TX.filter(t=>(typeF==="all"||t.type===typeF)&&(!selDay||t.date===selDay));
+      const grouped    = groupByDate(filtered);
+      const maxSpend   = Math.max(...WEEK.map(w=>w.spend),1);
+      const totalSpent = Math.abs(filtered.filter(t=>t.amount<0).reduce((a,t)=>a+t.amount,0));
+
+      // Calendar helpers
+      const MONTHS_JP = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+      const DOW_JP    = ["日","月","火","水","木","金","土"];
+      const txDates   = new Set(TX.map(t=>t.date));
+      const firstDOW  = new Date(calYear, calMon, 1).getDay();
+      const daysInMon = new Date(calYear, calMon+1, 0).getDate();
+      const calCells  = [...Array(firstDOW).fill(null), ...Array.from({length:daysInMon},(_,i)=>i+1)];
+      function pad(n){ return String(n).padStart(2,"0"); }
+      function toDS(d){ return `${calYear}-${pad(calMon+1)}-${pad(d)}`; }
+      function prevMon(){ if(calMon===0){setCalYear(y=>y-1);setCalMon(11);}else setCalMon(m=>m-1); }
+      function nextMon(){ if(calMon===11){setCalYear(y=>y+1);setCalMon(0);}else setCalMon(m=>m+1); }
 
       return (
         <div style={{background:B.bg,minHeight:"100%",paddingBottom:100}}>
@@ -329,31 +344,94 @@
             </div>
           </div>
 
-          {/* Week strip */}
-          <div style={{background:B.surface,padding:"10px 16px 0",borderBottom:`1px solid ${B.line}`}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
-              <span style={{fontSize:11,fontWeight:500,color:B.inkLight,letterSpacing:.3}}>4月21日 – 27日</span>
-              {selDay&&<button onClick={()=>setSelDay(null)} style={{display:"flex",alignItems:"center",gap:3,background:"none",border:"none",color:B.silver,fontSize:11}}><X size={11}/> クリア</button>}
-            </div>
-            <div style={{display:"flex",gap:4}}>
-              {WEEK.map(w=>{
-                const sel=selDay===w.date, isToday=w.date==="27";
-                const barH=Math.max(4,(w.spend/maxSpend)*32);
-                return (
-                  <button key={w.date} onClick={()=>setSelDay(sel?null:w.date)} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3,background:"none",border:"none",padding:"0 0 10px"}}>
-                    <div style={{width:"100%",height:36,display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
-                      <div style={{width:"70%",borderRadius:"3px 3px 0 0",height:barH,background:sel?B.green:isToday?B.greenBorder:B.line,transition:"all 0.18s"}}/>
-                    </div>
-                    <span style={{fontSize:9,color:sel?B.green:B.silver,fontWeight:500,height:10,lineHeight:"10px"}}>{sel&&w.spend>0?`¥${(w.spend/1000).toFixed(1)}k`:""}</span>
-                    <span style={{fontSize:11,color:sel?B.green:isToday?B.ink:B.silver,fontWeight:sel||isToday?600:400}}>{w.day}</span>
-                    <div style={{width:24,height:24,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",background:sel?B.green:isToday?B.raised:"transparent",transition:"all 0.18s"}}>
-                      <span style={{fontSize:11,fontWeight:700,color:sel?"#fff":isToday?B.ink:B.silver}}>{w.date}</span>
-                    </div>
-                    <div style={{width:4,height:4,borderRadius:"50%",background:w.spend>0?(sel?"#fff":B.greenBorder):"transparent"}}/>
+          {/* Week strip / Calendar */}
+          <div style={{background:B.surface,borderBottom:`1px solid ${B.line}`}}>
+
+            {/* Header row — tap to toggle */}
+            <div onClick={()=>setCalOpen(o=>!o)} style={{padding:"10px 16px 8px",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer"}}>
+              <span style={{fontSize:11,fontWeight:500,color:B.inkLight,letterSpacing:.3}}>
+                {calOpen ? `${calYear}年${MONTHS_JP[calMon]}` : "4月21日 – 27日"}
+              </span>
+              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                {selDay&&!calOpen&&(
+                  <button onClick={e=>{e.stopPropagation();setSelDay(null);}} style={{display:"flex",alignItems:"center",gap:3,background:"none",border:"none",color:B.silver,fontSize:11}}>
+                    <X size={11}/> クリア
                   </button>
-                );
-              })}
+                )}
+                {calOpen ? <ChevronUp size={14} color={B.silver} strokeWidth={2}/> : <ChevronDown size={14} color={B.silver} strokeWidth={2}/>}
+              </div>
             </div>
+
+            {/* Collapsed: week bar strip */}
+            {!calOpen&&(
+              <div style={{display:"flex",gap:4,padding:"0 16px"}}>
+                {WEEK.map(w=>{
+                  const sel=selDay===`2026-04-${w.date}`, isToday=w.date==="27";
+                  const barH=Math.max(4,(w.spend/maxSpend)*32);
+                  return (
+                    <button key={w.date} onClick={()=>setSelDay(sel?null:`2026-04-${w.date}`)} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3,background:"none",border:"none",padding:"0 0 10px"}}>
+                      <div style={{width:"100%",height:36,display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
+                        <div style={{width:"70%",borderRadius:"3px 3px 0 0",height:barH,background:sel?B.green:isToday?B.greenBorder:B.line,transition:"all 0.18s"}}/>
+                      </div>
+                      <span style={{fontSize:9,color:sel?B.green:B.silver,fontWeight:500,height:10,lineHeight:"10px"}}>{sel&&w.spend>0?`¥${(w.spend/1000).toFixed(1)}k`:""}</span>
+                      <span style={{fontSize:11,color:sel?B.green:isToday?B.ink:B.silver,fontWeight:sel||isToday?600:400}}>{w.day}</span>
+                      <div style={{width:24,height:24,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",background:sel?B.green:isToday?B.raised:"transparent",transition:"all 0.18s"}}>
+                        <span style={{fontSize:11,fontWeight:700,color:sel?"#fff":isToday?B.ink:B.silver}}>{w.date}</span>
+                      </div>
+                      <div style={{width:4,height:4,borderRadius:"50%",background:w.spend>0?(sel?"#fff":B.greenBorder):"transparent"}}/>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Expanded: full month calendar */}
+            {calOpen&&(
+              <div style={{padding:"0 16px 14px"}}>
+                {/* Month navigator */}
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+                  <button onClick={e=>{e.stopPropagation();prevMon();}} style={{width:32,height:32,borderRadius:8,border:"none",background:B.raised,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    <ChevronLeft size={16} color={B.inkLight} strokeWidth={2}/>
+                  </button>
+                  <span style={{fontSize:14,fontWeight:600,color:B.ink}}>{calYear}年{MONTHS_JP[calMon]}</span>
+                  <button onClick={e=>{e.stopPropagation();nextMon();}} style={{width:32,height:32,borderRadius:8,border:"none",background:B.raised,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    <ChevronRight size={16} color={B.inkLight} strokeWidth={2}/>
+                  </button>
+                </div>
+                {/* Day-of-week headers */}
+                <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",marginBottom:2}}>
+                  {DOW_JP.map((d,i)=>(
+                    <div key={d} style={{textAlign:"center",fontSize:10,fontWeight:500,padding:"3px 0",color:i===0?"#E15B5D":i===6?B.blue:B.silver}}>{d}</div>
+                  ))}
+                </div>
+                {/* Day cells */}
+                <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)"}}>
+                  {calCells.map((d,i)=>{
+                    if (!d) return <div key={i}/>;
+                    const ds=toDS(d);
+                    const hasTx=txDates.has(ds);
+                    const isSel=selDay===ds;
+                    const isToday=ds==="2026-04-27";
+                    const dow=i%7;
+                    const textCol=isSel?"#fff":isToday?B.green:dow===0?"#E15B5D":dow===6?B.blue:B.ink;
+                    return (
+                      <button key={i} onClick={e=>{e.stopPropagation();setSelDay(isSel?null:ds);}} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2,padding:"3px 0",background:"none",border:"none"}}>
+                        <div style={{width:30,height:30,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",background:isSel?B.green:isToday?B.greenTint:"transparent",border:isToday&&!isSel?`1.5px solid ${B.green}`:"1.5px solid transparent",transition:"all 0.15s"}}>
+                          <span style={{fontSize:12,fontWeight:isSel||isToday?700:400,color:textCol,lineHeight:1}}>{d}</span>
+                        </div>
+                        <div style={{width:4,height:4,borderRadius:"50%",background:hasTx?(isSel?"#fff":B.green):"transparent"}}/>
+                      </button>
+                    );
+                  })}
+                </div>
+                {/* Clear button */}
+                {selDay&&(
+                  <button onClick={e=>{e.stopPropagation();setSelDay(null);}} style={{width:"100%",marginTop:10,padding:"8px",background:B.raised,border:"none",borderRadius:8,fontSize:12,color:B.inkLight,display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
+                    <X size={12} strokeWidth={2}/> 選択を解除
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Type filter */}
@@ -366,7 +444,7 @@
           </div>
 
           <div style={{padding:"10px 16px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-            <span style={{fontSize:13,color:B.silver}}>{selDay?`4月${selDay}日`:"2026年4月"} · {filtered.length}件</span>
+            <span style={{fontSize:13,color:B.silver}}>{selDay?new Date(selDay+"T00:00:00").toLocaleDateString("ja-JP",{month:"long",day:"numeric"}):"2026年4月"} · {filtered.length}件</span>
             <span style={{fontSize:13,fontWeight:600,color:B.ink}}>¥{totalSpent.toLocaleString()} 利用</span>
           </div>
 
