@@ -97,6 +97,32 @@
       { id:12, date:"2026-04-22", time:"13:30", type:"purchase",  label:"NewDays",               sub:"駅構内ショップ",          amount:-340,  bal:1717,  pts:3,   station:"Ebisu"     },
       { id:13, date:"2026-04-21", time:"08:03", type:"transport", label:"新宿 → 立川",            sub:"JR中央線快速",           amount:-398,  bal:2057,  pts:0,   station:"Tachikawa" },
       { id:14, date:"2026-04-21", time:"17:45", type:"purchase",  label:"無印良品 立川",           sub:"小売",                   amount:-2400, bal:2455,  pts:24,  station:"Tachikawa" },
+      // April 1–20
+      { id:15, date:"2026-04-20", time:"12:15", type:"purchase",  label:"マクドナルド",            sub:"ファストフード",          amount:-580,  bal:2625,  pts:6,   station:"Shinjuku"  },
+      { id:16, date:"2026-04-18", time:"08:10", type:"transport", label:"渋谷 → 新宿",             sub:"JR山手線",               amount:-210,  bal:3205,  pts:0,   station:"Shinjuku"  },
+      { id:17, date:"2026-04-16", time:"19:30", type:"tappay",    label:"Tappayチャージ",           sub:"登録銀行口座",           amount:5000,  bal:3415,  pts:0,   station:"Shinjuku"  },
+      { id:18, date:"2026-04-14", time:"13:45", type:"purchase",  label:"ユニクロ 渋谷",            sub:"アパレル",               amount:-3200, bal:2415,  pts:32,  station:"Shibuya"   },
+      { id:19, date:"2026-04-12", time:"09:05", type:"transport", label:"新宿 → 渋谷",             sub:"JR山手線",               amount:-210,  bal:5615,  pts:0,   station:"Shibuya"   },
+      { id:20, date:"2026-04-10", time:"16:20", type:"jre",       label:"JREポイント獲得",          sub:"ショッピング特典",        amount:0,     bal:5825,  pts:200, station:"Tokyo"     },
+      { id:21, date:"2026-04-08", time:"08:00", type:"transport", label:"東京 → 上野",             sub:"JR山手線",               amount:-170,  bal:5825,  pts:0,   station:"Ueno"      },
+      { id:22, date:"2026-04-05", time:"14:00", type:"purchase",  label:"スターバックス",           sub:"カフェ",                 amount:-680,  bal:5995,  pts:7,   station:"Tokyo"     },
+      { id:23, date:"2026-04-03", time:"08:30", type:"transport", label:"渋谷 → 東京",             sub:"JR山手線",               amount:-210,  bal:6675,  pts:0,   station:"Tokyo"     },
+      { id:24, date:"2026-04-01", time:"10:00", type:"tappay",    label:"Tappayチャージ",           sub:"登録銀行口座",           amount:8000,  bal:6885,  pts:0,   station:"Shinjuku"  },
+      // March
+      { id:25, date:"2026-03-29", time:"09:00", type:"transport", label:"新宿 → 立川",             sub:"JR中央線快速",           amount:-398,  bal:2885,  pts:0,   station:"Tachikawa" },
+      { id:26, date:"2026-03-25", time:"15:30", type:"purchase",  label:"ドン・キホーテ",           sub:"小売",                   amount:-2800, bal:3283,  pts:28,  station:"Shibuya"   },
+      { id:27, date:"2026-03-20", time:"12:10", type:"jre",       label:"JREポイント利用",          sub:"残高へ変換",             amount:1000,  bal:6083,  pts:-100,station:"Tokyo"     },
+      { id:28, date:"2026-03-15", time:"08:05", type:"transport", label:"池袋 → 東京",             sub:"東京メトロ丸ノ内線",      amount:-240,  bal:5083,  pts:0,   station:"Tokyo"     },
+      { id:29, date:"2026-03-10", time:"14:30", type:"purchase",  label:"ビックカメラ 池袋",        sub:"家電",                   amount:-12800,bal:5323,  pts:128, station:"Ikebukuro" },
+      { id:30, date:"2026-03-05", time:"10:00", type:"tappay",    label:"Tappayチャージ",           sub:"登録銀行口座",           amount:15000, bal:18123, pts:0,   station:"Shinjuku"  },
+      { id:31, date:"2026-03-01", time:"08:20", type:"transport", label:"渋谷 → 新宿",             sub:"JR山手線",               amount:-210,  bal:3123,  pts:0,   station:"Shinjuku"  },
+      // February
+      { id:32, date:"2026-02-25", time:"13:00", type:"purchase",  label:"無印良品 銀座",            sub:"小売",                   amount:-4500, bal:3333,  pts:45,  station:"Tokyo"     },
+      { id:33, date:"2026-02-20", time:"09:00", type:"transport", label:"上野 → 東京",             sub:"JR山手線",               amount:-170,  bal:7833,  pts:0,   station:"Tokyo"     },
+      { id:34, date:"2026-02-15", time:"10:00", type:"tappay",    label:"Tappayチャージ",           sub:"登録銀行口座",           amount:10000, bal:8003,  pts:0,   station:"Shinjuku"  },
+      { id:35, date:"2026-02-10", time:"12:30", type:"purchase",  label:"ローソン",               sub:"コンビニ",               amount:-650,  bal:3003,  pts:7,   station:"Shibuya"   },
+      { id:36, date:"2026-02-05", time:"08:00", type:"transport", label:"新宿 → 渋谷",             sub:"JR山手線",               amount:-210,  bal:3653,  pts:0,   station:"Shibuya"   },
+      { id:37, date:"2026-02-01", time:"11:00", type:"jre",       label:"JREポイント獲得",          sub:"ショッピング特典",        amount:0,     bal:3863,  pts:150, station:"Tokyo"     },
     ];
 
     const TYPE_CFG = {
@@ -541,24 +567,74 @@
       const [tab,setTab]       = useState("insights");
 
       const cardData = CARDS.find(c=>c.id===card);
-      const filtered = TX.filter(t=>typeF==="all"||t.type===typeF);
-      const grouped  = groupByDate(filtered);
-      const spent    = Math.abs(filtered.filter(t=>t.amount<0).reduce((a,t)=>a+t.amount,0));
-      const income   = filtered.filter(t=>t.amount>0).reduce((a,t)=>a+t.amount,0);
-      const pts      = filtered.reduce((a,t)=>a+t.pts,0);
-      const txCount  = filtered.length;
 
-      const byType   = Object.entries(TYPE_CFG).map(([k,cfg])=>({key:k,...cfg,total:Math.abs(TX.filter(t=>t.type===k&&t.amount<0).reduce((a,t)=>a+t.amount,0))}));
+      // Period filtering
+      const PERIOD_FROM   = {today:"2026-04-27", week:"2026-04-21", month:"2026-04-01", "3m":"2026-02-01"};
+      const PERIOD_LABELS = {today:"今日", week:"今週", month:"今月", "3m":"3ヶ月"};
+      const PERIOD_DATE_LABELS = {today:"2026年4月27日", week:"4月21日 – 27日", month:"2026年4月", "3m":"2月 – 4月"};
+      const periodTX = TX.filter(t=>t.date>=PERIOD_FROM[period]);
+      const filtered  = periodTX.filter(t=>typeF==="all"||t.type===typeF);
+      const grouped   = groupByDate(filtered);
+      const spent     = Math.abs(periodTX.filter(t=>t.amount<0).reduce((a,t)=>a+t.amount,0));
+      const income    = periodTX.filter(t=>t.amount>0).reduce((a,t)=>a+t.amount,0);
+      const pts       = periodTX.reduce((a,t)=>a+t.pts,0);
+      const txCount   = periodTX.length;
+
+      // Category donut for period
+      const byType   = Object.entries(TYPE_CFG).map(([k,cfg])=>({key:k,...cfg,total:Math.abs(periodTX.filter(t=>t.type===k&&t.amount<0).reduce((a,t)=>a+t.amount,0))}));
       const typeTotal= byType.reduce((a,b)=>a+b.total,0)||1;
       const maxType  = Math.max(...byType.map(b=>b.total),1);
-      const maxMonth = Math.max(...MONTHLY.map(m=>m.v),1);
-      const maxWeek  = Math.max(...WEEK.map(w=>w.spend),1);
 
-      const balPts = TX.slice(0,8).reverse().map(t=>t.bal);
-      const minB=Math.min(...balPts), maxB=Math.max(...balPts);
+      // Sparkline for period
+      const balPts = periodTX.slice(0,8).reverse().map(t=>t.bal);
+      const minB=Math.min(...balPts,0), maxB=Math.max(...balPts,1);
       const SW=260, SH=44;
       const toSY=(v,h)=>h-((v-minB)/(maxB-minB||1))*h;
-      const sparkPts=balPts.map((v,i)=>`${(i/(balPts.length-1))*SW},${toSY(v,SH)}`).join(" ");
+      const sparkPts=balPts.length>1?balPts.map((v,i)=>`${(i/(balPts.length-1))*SW},${toSY(v,SH)}`).join(" "):`0,${SH/2} ${SW},${SH/2}`;
+
+      // Bar chart — adapts granularity to period
+      let barData=[], barLabel="";
+      if(period==="today"){
+        barLabel="時間帯別支出 · 今日";
+        barData=[
+          {label:"朝",   spend:Math.abs(periodTX.filter(t=>t.amount<0&&parseInt(t.time)<12).reduce((a,t)=>a+t.amount,0))},
+          {label:"昼",   spend:Math.abs(periodTX.filter(t=>t.amount<0&&parseInt(t.time)>=12&&parseInt(t.time)<15).reduce((a,t)=>a+t.amount,0))},
+          {label:"午後", spend:Math.abs(periodTX.filter(t=>t.amount<0&&parseInt(t.time)>=15&&parseInt(t.time)<18).reduce((a,t)=>a+t.amount,0))},
+          {label:"夜",   spend:Math.abs(periodTX.filter(t=>t.amount<0&&parseInt(t.time)>=18).reduce((a,t)=>a+t.amount,0))},
+        ];
+      } else if(period==="week"){
+        barLabel="日別支出 · 今週";
+        const DOW=["日","月","火","水","木","金","土"];
+        barData=["2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-25","2026-04-26","2026-04-27"].map(ds=>({
+          label:DOW[new Date(ds+"T00:00:00").getDay()], ds,
+          spend:Math.abs(TX.filter(t=>t.date===ds&&t.amount<0).reduce((a,t)=>a+t.amount,0)),
+        }));
+      } else if(period==="month"){
+        barLabel="週別支出 · 今月";
+        barData=[
+          {label:"第1週",spend:Math.abs(TX.filter(t=>t.date>="2026-04-01"&&t.date<="2026-04-07"&&t.amount<0).reduce((a,t)=>a+t.amount,0))},
+          {label:"第2週",spend:Math.abs(TX.filter(t=>t.date>="2026-04-08"&&t.date<="2026-04-14"&&t.amount<0).reduce((a,t)=>a+t.amount,0))},
+          {label:"第3週",spend:Math.abs(TX.filter(t=>t.date>="2026-04-15"&&t.date<="2026-04-21"&&t.amount<0).reduce((a,t)=>a+t.amount,0))},
+          {label:"第4週",spend:Math.abs(TX.filter(t=>t.date>="2026-04-22"&&t.date<="2026-04-27"&&t.amount<0).reduce((a,t)=>a+t.amount,0))},
+        ];
+      } else {
+        barLabel="月別支出 · 3ヶ月";
+        barData=[
+          {label:"2月",spend:Math.abs(TX.filter(t=>t.date.startsWith("2026-02")&&t.amount<0).reduce((a,t)=>a+t.amount,0))},
+          {label:"3月",spend:Math.abs(TX.filter(t=>t.date.startsWith("2026-03")&&t.amount<0).reduce((a,t)=>a+t.amount,0))},
+          {label:"4月",spend:Math.abs(TX.filter(t=>t.date.startsWith("2026-04")&&t.amount<0).reduce((a,t)=>a+t.amount,0))},
+        ];
+      }
+      const maxBar=Math.max(...barData.map(b=>b.spend),1);
+
+      // Monthly trend — computed from real TX data
+      const monthlyData=[
+        {m:"11月",v:8200},{m:"12月",v:11400},{m:"1月",v:7100},
+        {m:"2月",v:Math.abs(TX.filter(t=>t.date.startsWith("2026-02")&&t.amount<0).reduce((a,t)=>a+t.amount,0))},
+        {m:"3月",v:Math.abs(TX.filter(t=>t.date.startsWith("2026-03")&&t.amount<0).reduce((a,t)=>a+t.amount,0))},
+        {m:"4月",v:Math.abs(TX.filter(t=>t.date.startsWith("2026-04")&&t.amount<0).reduce((a,t)=>a+t.amount,0))},
+      ];
+      const maxMonth=Math.max(...monthlyData.map(m=>m.v),1);
 
       return (
         <div style={{background:B.bg,minHeight:"100%",paddingBottom:100}}>
@@ -591,7 +667,7 @@
                 <button key={k} onClick={()=>setPer(k)} style={{flex:1,padding:"6px 4px",borderRadius:6,border:"none",background:period===k?"rgba(255,255,255,.96)":"transparent",color:period===k?B.green:"rgba(255,255,255,.6)",fontSize:11,fontWeight:period===k?600:400,transition:"all 0.18s"}}>{l}</button>
               ))}
             </div>
-            <div style={{fontSize:11,color:"rgba(255,255,255,.6)",fontWeight:500,letterSpacing:.4,marginBottom:4}}>今週の支出合計</div>
+            <div style={{fontSize:11,color:"rgba(255,255,255,.6)",fontWeight:500,letterSpacing:.4,marginBottom:4}}>{PERIOD_LABELS[period]}の支出合計</div>
             <div style={{fontSize:34,fontWeight:700,color:"#fff",letterSpacing:-1,lineHeight:1}}>¥{spent.toLocaleString()}</div>
             <div style={{display:"flex",alignItems:"center",gap:4,marginTop:6}}>
               <TrendingDown size={13} color="rgba(255,255,255,.6)"/>
@@ -617,7 +693,7 @@
 
               {/* KPI tiles */}
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-                {[{label:"取引件数",value:txCount,sub:"今週",Icon:List,color:B.blue},{label:"JREポイント",value:`+${pts}`,sub:"獲得",Icon:Star,color:B.amber}].map(({label,value,sub,Icon,color})=>(
+                {[{label:"取引件数",value:txCount,sub:PERIOD_LABELS[period],Icon:List,color:B.blue},{label:"JREポイント",value:`+${pts}`,sub:"獲得",Icon:Star,color:B.amber}].map(({label,value,sub,Icon,color})=>(
                   <div key={label} style={{background:B.surface,borderRadius:16,padding:"14px 16px",border:`1px solid ${B.line}`,boxShadow:S.xs}}>
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
                       <span style={{fontSize:11,color:B.silver,fontWeight:400}}>{label}</span>
@@ -651,13 +727,13 @@
 
               {/* Daily bars */}
               <div style={{background:B.surface,borderRadius:16,padding:"16px 18px",border:`1px solid ${B.line}`,boxShadow:S.xs}}>
-                <div style={{fontSize:13,fontWeight:600,color:B.ink,marginBottom:14}}>日別支出 · 今週</div>
+                <div style={{fontSize:13,fontWeight:600,color:B.ink,marginBottom:14}}>{barLabel}</div>
                 <div style={{display:"flex",alignItems:"flex-end",gap:6,height:80}}>
-                  {WEEK.map(w=>{const h=Math.max(4,(w.spend/maxWeek)*64),isToday=w.date==="27";return(
-                    <div key={w.date} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
-                      <span style={{fontSize:9,color:isToday?B.green:"transparent",fontWeight:600}}>{isToday?`¥${(w.spend/1000).toFixed(1)}k`:"·"}</span>
-                      <div style={{width:"100%",borderRadius:"4px 4px 0 0",height:h,background:isToday?B.green:B.greenBorder,transition:"height 0.4s"}}/>
-                      <span style={{fontSize:9,color:isToday?B.ink:B.silver,fontWeight:isToday?600:400}}>{w.day}</span>
+                  {barData.map((b,i)=>{const h=Math.max(4,(b.spend/maxBar)*64),isCur=period==="week"?b.ds==="2026-04-27":i===barData.length-1;return(
+                    <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+                      <span style={{fontSize:9,color:isCur?B.green:"transparent",fontWeight:600}}>{isCur&&b.spend>0?`¥${(b.spend/1000).toFixed(1)}k`:"·"}</span>
+                      <div style={{width:"100%",borderRadius:"4px 4px 0 0",height:h,background:isCur?B.green:B.greenBorder,transition:"height 0.4s"}}/>
+                      <span style={{fontSize:9,color:isCur?B.ink:B.silver,fontWeight:isCur?600:400}}>{b.label}</span>
                     </div>
                   );})}
                 </div>
@@ -666,7 +742,7 @@
               {/* Donut */}
               <div style={{background:B.surface,borderRadius:16,padding:"16px 18px",border:`1px solid ${B.line}`,boxShadow:S.xs}}>
                 <div style={{fontSize:13,fontWeight:600,color:B.ink,marginBottom:4}}>カテゴリ別内訳</div>
-                <div style={{fontSize:11,color:B.silver,marginBottom:14}}>2026年4月</div>
+                <div style={{fontSize:11,color:B.silver,marginBottom:14}}>{PERIOD_DATE_LABELS[period]}</div>
                 {(()=>{
                   const R=54,CX=70,CY=70,stroke=18,circ=2*Math.PI*R;
                   let off=0;
@@ -699,7 +775,7 @@
                 <div style={{fontSize:13,fontWeight:600,color:B.ink,marginBottom:4}}>6ヶ月推移</div>
                 <div style={{fontSize:11,color:B.silver,marginBottom:14}}>月別支出合計</div>
                 <div style={{display:"flex",alignItems:"flex-end",gap:8,height:72}}>
-                  {MONTHLY.map(m=>{const h=Math.max(4,(m.v/maxMonth)*58),isCur=m.m==="Apr";return(
+                  {monthlyData.map(m=>{const h=Math.max(4,(m.v/maxMonth)*58),isCur=m.m==="4月";return(
                     <div key={m.m} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:5}}>
                       <span style={{fontSize:9,color:isCur?B.green:"transparent",fontWeight:600}}>{isCur?`¥${(m.v/1000).toFixed(1)}k`:"·"}</span>
                       <div style={{width:"100%",borderRadius:"4px 4px 0 0",height:h,background:isCur?B.green:B.line,transition:"height 0.4s"}}/>
