@@ -512,7 +512,7 @@
           {/* Type filter */}
           <div style={{background:B.surface,padding:"10px 16px",borderBottom:`1px solid ${B.line}`}}>
             <div className="filter-scroll" style={{display:"flex",gap:6,overflowX:"auto"}}>
-              {[["all","すべて"],["transport","交通"],["purchase","お買い物"],["jre","ポイント"],["tappay","送金"]].map(([k,l])=>(
+              {[["all","すべて"],["transport","交通"],["purchase","お買い物"],["jre","ポイント"],["tappay","Tappay"]].map(([k,l])=>(
                 <button key={k} onClick={()=>setTypeF(k)} style={{padding:"8px 16px",borderRadius:24,border:"none",fontSize:13,fontWeight:500,flexShrink:0,transition:"all 0.15s",background:typeF===k?B.green:B.raised,color:typeF===k?"#fff":B.inkLight}}>{l}</button>
               ))}
             </div>
@@ -792,7 +792,7 @@
               {/* Filter */}
               <div style={{background:B.surface,padding:"10px 16px",borderBottom:`1px solid ${B.line}`}}>
                 <div className="filter-scroll" style={{display:"flex",gap:6,overflowX:"auto"}}>
-                  {[["all","すべて"],["transport","交通"],["purchase","お買い物"],["jre","ポイント"],["tappay","送金"]].map(([k,l])=>(
+                  {[["all","すべて"],["transport","交通"],["purchase","お買い物"],["jre","ポイント"],["tappay","Tappay"]].map(([k,l])=>(
                     <button key={k} onClick={()=>setTypeF(k)} style={{padding:"8px 16px",borderRadius:24,border:"none",fontSize:13,fontWeight:500,flexShrink:0,transition:"all 0.15s",background:typeF===k?B.green:B.raised,color:typeF===k?"#fff":B.inkLight}}>{l}</button>
                   ))}
                 </div>
@@ -1016,7 +1016,7 @@
 
           {/* Filter pills */}
           <div className="filter-scroll" style={{position:"absolute",top:72,left:0,right:0,zIndex:20,padding:"0 14px",display:"flex",gap:6,overflowX:"auto"}}>
-            {[["all","すべて"],["transport","交通"],["purchase","お買い物"],["jre","ポイント"],["tappay","送金"]].map(([k,l])=>(
+            {[["all","すべて"],["transport","交通"],["purchase","お買い物"],["jre","ポイント"],["tappay","Tappay"]].map(([k,l])=>(
               <button key={k} onClick={()=>{setTypeF(k);setSel(null);setSheet("peek");}} style={{padding:"8px 16px",borderRadius:24,border:"none",fontSize:13,fontWeight:500,flexShrink:0,transition:"all 0.15s",background:typeF===k?B.green:B.surface,color:typeF===k?"#fff":B.inkLight,boxShadow:S.md}}>{l}</button>
             ))}
           </div>
