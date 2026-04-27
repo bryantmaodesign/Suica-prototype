@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Suica — サブスク</title>
+  <link rel="stylesheet" href="../shared/base.css" />
+  <link rel="stylesheet" href="../shared/components.css" />
+  <link rel="stylesheet" href="subscription.css" />
+</head>
+<body>
+
+<div class="phone">
+
+<!-- ═══════════════════════════════════════════
+     Screen 1: Landing
+═══════════════════════════════════════════ -->
+<div id="screen-landing" class="screen active">
+
+  <!-- Scrollable body — hero lives inside so the card stacks above it cleanly -->
+  <div class="screen-body">
+
+    <!-- Hero image (inside scroll, so landing-card's z-index works correctly) -->
+    <div class="hero">
+      <img
+        class="hero__image"
+        src="https://www.figma.com/api/mcp/asset/8f319a10-0df1-4c83-a199-b402f15f4e40"
+        alt=""
+        onerror="this.style.display='none'"
+      />
+      <div class="hero__fade"></div>
+      <div class="hero-nav">
+        <button class="hero-nav__btn" onclick="history.back()" aria-label="戻る">
+          <img src="../../Icons/back.svg" alt="" width="20" height="20" style="filter:brightness(0) invert(1);" />
+        </button>
+        <button class="hero-nav__btn" onclick="openSettings()" aria-label="設定">
+          <img src="../../Icons/settings.svg" alt="" width="20" height="20" style="filter:brightness(0) invert(1);" />
+        </button>
+      </div>
+    </div>
+
+    <!-- Floating plan card — overlaps hero bottom via negative margin-top -->
+    <div class="landing-card" id="landingCard">
+      <div class="landing-card__plan-name" id="landingPlanName"></div>
+      <div class="landing-card__headline" id="landingHeadline"></div>
+      <ul class="landing-card__bullets" id="landingBullets"></ul>
+    </div>
+
+    <!-- Other plans -->
+    <div class="other-plans-section">
+      <div class="section-title">そのほかの対象プラン</div>
+      <div id="landingOtherPlans"></div>
+    </div>
+
+    <!-- Notes -->
+    <div class="notes-card">
+      <div class="notes-card__title">注意事項</div>
+      <ul class="notes-list">
+        <li>本サービスの利用対象は、SuicaアプリのSuica会員に限る。</li>
+        <li>サブスクは30日周期で自動更新され、解約しない限り継続されます。</li>
+        <li>払い戻しは原則対応不可とします。</li>
+        <li>初回適用は対象事業者・対象Suicaなど規定条件を満たす者に限る。</li>
+      </ul>
+      <a href="#" class="notes-link">詳しい注意事項をご確認ください ›</a>
+    </div>
+
+  </div><!-- /screen-body -->
+
+  <div class="cta-bar">
+    <button class="btn btn-primary" onclick="goToPlanSelect()">おすすめのプランを見る</button>
+  </div>
+
+</div><!-- /screen-landing -->
+
+
+<!-- ═══════════════════════════════════════════
+     Screen 2: Plan Selection
+═══════════════════════════════════════════ -->
+<div id="screen-plan-select" class="screen">
+
+  <nav class="nav-bar-simple">
+    <button class="nav-bar__back" onclick="showScreen('screen-landing')" aria-label="戻る">
+      <img src="../../Icons/back.svg" alt="" width="24" height="24" />
+    </button>
+  </nav>
+
+  <div class="screen-body">
+    <div class="screen-title">プランを選択</div>
+
+    <!-- Simulation card -->
+    <div class="sim-card">
+      <div class="sim-card__top">
+        <div class="sim-card__card-info">
+          <div class="sim-card__card-label">仕事用</div>
+          <div class="sim-card__card-number">AA123 4567 8901 2345</div>
+        </div>
+        <img
+          class="sim-card__suica-icon"
+          src="https://www.figma.com/api/mcp/asset/a4b47b48-a1bc-45b3-a1f3-8cd588bca814"
+          alt="Suica"
+          onerror="this.style.background='var(--brand-default)';this.style.borderRadius='8px';"
+        />
+      </div>
+
+      <!-- Station row -->
+      <div class="sim-card__station-row" onclick="openSettings()">
+        <div>
+          <div class="sim-card__row-label">サブスク拠点駅</div>
+          <div class="sim-card__station-value" id="simStation">渋谷駅</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="opacity:0.4;flex-shrink:0;">
+          <path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <!-- Spending slider -->
+      <div>
+        <div class="sim-card__slider-header">
+          <div class="sim-card__row-label">月の平均電車賃</div>
+          <div class="sim-card__slider-amount" id="simSpendingVal">¥15,000<span>/ 月</span></div>
+        </div>
+        <input
+          type="range"
+          class="spending-slider"
+          id="spendingSlider"
+          min="0"
+          max="30000"
+          step="500"
+          value="15000"
+          oninput="onSliderChange(this)"
+        />
+      </div>
+    </div>
+
+    <div class="plans-section-label">利用可能なプラン</div>
+    <div class="plan-cards-list" id="planCardsList"></div>
+  </div>
+
+  <div class="cta-bar">
+    <button class="btn btn-primary" onclick="goToConfirm()">続ける</button>
+  </div>
+
+</div><!-- /screen-plan-select -->
+
+
+<!-- ═══════════════════════════════════════════
+     Screen 3: Contract Confirmation
+═══════════════════════════════════════════ -->
+<div id="screen-confirm" class="screen">
+
+  <nav class="nav-bar-simple">
+    <button class="nav-bar__back" onclick="showScreen('screen-plan-select')" aria-label="戻る">
+      <img src="../../Icons/back.svg" alt="" width="24" height="24" />
+    </button>
+  </nav>
+
+  <div class="screen-body">
+    <div class="screen3-header">
+      <div class="screen3-title">契約内容確認</div>
+      <div class="screen3-subtitle">契約内容を確認してください</div>
+    </div>
+    <div class="confirm-list" id="confirmList"></div>
+
+    <div class="notes-card">
+      <div class="notes-card__title">注意事項</div>
+      <ul class="notes-list">
+        <li>本サービスの利用対象は、SuicaアプリのSuica会員に限る。</li>
+        <li>サブスクは30日周期で自動更新され、解約しない限り継続されます。</li>
+        <li>払い戻しは原則対応不可とします。</li>
+        <li>初回適用は対象事業者・対象Suicaなど規定条件を満たす者に限る。</li>
+      </ul>
+      <a href="#" class="notes-link">詳しい注意事項をご確認ください ›</a>
+    </div>
+  </div>
+
+  <div class="cta-bar">
+    <button class="btn btn-primary" onclick="goToSuccess()">申し込む</button>
+  </div>
+
+</div><!-- /screen-confirm -->
+
+
+<!-- ═══════════════════════════════════════════
+     Screen 4: My Subscription + Success Modal
+═══════════════════════════════════════════ -->
+<div id="screen-success" class="screen">
+
+  <!-- Background: マイサブスク (non-interactive) -->
+  <div class="mysub-bg">
+    <div class="mysub-bg__nav">
+      <div class="mysub-bg__nav-title">マイサブスク</div>
+    </div>
+    <div class="mysub-bg__content">
+      <div class="mysub-card" id="mysubCard">
+        <div class="mysub-card__label">ご利用中のプラン</div>
+        <div class="mysub-card__plan" id="mysubPlanName">ベーシックプラン</div>
+        <div class="mysub-card__progress-labels">
+          <span>利用開始 2026/04/12</span>
+          <span>更新日 2026/05/12</span>
+        </div>
+        <div class="mysub-card__progress-bar">
+          <div class="mysub-card__progress-fill"></div>
+        </div>
+      </div>
+      <div class="mysub-btns">
+        <div class="mysub-btn mysub-btn--primary">今すぐ乗る</div>
+        <div class="mysub-btn mysub-btn--secondary">解約する</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success modal overlay -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-modal">
+      <img
+        class="success-modal__image"
+        src="https://www.figma.com/api/mcp/asset/eaf3f29d-07bf-43f0-8b1d-d3acfd10bf0a"
+        alt=""
+        onerror="this.style.background='linear-gradient(140deg, var(--brand-green-700), var(--brand-green-400))';"
+      />
+      <div class="success-modal__body">
+        <div class="success-modal__title" id="successTitle"></div>
+        <div class="success-modal__actions">
+          <button class="success-btn success-btn--primary" onclick="goHome()">今すぐ出かける</button>
+          <button class="success-btn success-btn--secondary" onclick="dismissSuccessModal()">マイサブスクへ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /screen-success -->
+
+
+<!-- ═══════════════════════════════════════════
+     Settings bottom sheet
+     (inside .phone so position:absolute works)
+═══════════════════════════════════════════ -->
+<div class="sheet-overlay" id="settingsOverlay" onclick="closeSettings()"></div>
+
+<div class="settings-sheet" id="settingsSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">設定</div>
+
+  <div class="settings-field">
+    <div class="settings-field__label">最寄り駅（サブスク拠点駅）</div>
+    <input
+      class="settings-field__input"
+      id="inputStation"
+      type="text"
+      placeholder="例：渋谷駅"
+      value="渋谷駅"
+      autocomplete="off"
+    />
+    <div class="settings-field__hint">定期券などの拠点となる駅名を入力してください</div>
+  </div>
+
+  <div class="settings-field">
+    <div class="settings-field__label">月の平均電車賃（円）</div>
+    <input
+      class="settings-field__input"
+      id="inputSpending"
+      type="number"
+      inputmode="numeric"
+      placeholder="例：15000"
+      value="15000"
+      min="0"
+    />
+    <div class="settings-field__hint">1ヶ月の交通費の平均を入力すると節約額をシミュレーションできます</div>
+  </div>
+
+  <div class="sheet-actions">
+    <button class="btn btn-secondary" onclick="closeSettings()">キャンセル</button>
+    <button class="btn btn-primary" onclick="saveSettings()">保存</button>
+  </div>
+</div>
+
+</div><!-- /.phone -->
+
+<script>
+/* ─── Constants ───────────────────────────────── */
+const CARD_NUMBER = 'AA123 4567 8901 2345';
+const CARD_LABEL  = '仕事用';
+
+/* ─── Plan data ───────────────────────────────── */
+// Prices engineered for distinct recommendation zones:
+// Basic  → recommended when monthly spending < ¥8,500
+// Standard → recommended when spending ¥8,500 – ¥18,000
+// Premium  → recommended when spending > ¥18,000
+const PLANS = [
+  {
+    id: 'basic',
+    name: 'ベーシックプラン',
+    price: 1000,
+    discountRate: 0.20,
+    cap: 3000,
+    pointBonus: 0,
+  },
+  {
+    id: 'standard',
+    name: 'スタンダードプラン',
+    price: 1400,
+    discountRate: 0.25,
+    cap: 4500,
+    pointBonus: 2,
+  },
+  {
+    id: 'premium',
+    name: 'プレミアムプラン',
+    price: 2300,
+    discountRate: 0.30,
+    cap: 6000,
+    pointBonus: 2,
+  },
+];
+
+/* ─── State ───────────────────────────────────── */
+let settings = { station: '渋谷駅', spending: 15000 };
+let selectedPlanId = null; // null = use recommended
+
+/* ─── Helpers ─────────────────────────────────── */
+function fmt(n) {
+  return '¥' + Number(n).toLocaleString('ja-JP');
+}
+
+function estimatedSavings(plan) {
+  if (!settings.spending) return null;
+  return Math.min(settings.spending * plan.discountRate, plan.cap);
+}
+
+function netBenefit(plan) {
+  const s = estimatedSavings(plan);
+  return s === null ? -Infinity : s - plan.price;
+}
+
+function recommendedPlan() {
+  if (settings.spending > 0) {
+    return PLANS.reduce((best, p) => netBenefit(p) > netBenefit(best) ? p : best);
+  }
+  return PLANS[0];
+}
+
+function currentPlan() {
+  return PLANS.find(p => p.id === selectedPlanId) || recommendedPlan();
+}
+
+/* ─── Navigation ──────────────────────────────── */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goToPlanSelect() {
+  selectedPlanId = recommendedPlan().id;
+  _lastRecId = selectedPlanId; // start tracking from current rec so first move can animate
+  // Sync slider to current settings
+  const slider = document.getElementById('spendingSlider');
+  slider.value = settings.spending;
+  updateSliderTrack(slider);
+  renderSimCard();
+  renderPlanCards();
+  showScreen('screen-plan-select');
+}
+
+function goToConfirm() {
+  renderConfirm();
+  showScreen('screen-confirm');
+}
+
+function goToSuccess() {
+  renderSuccess();
+  showScreen('screen-success');
+}
+
+function goHome() {
+  window.location.href = '../home/index.html';
+}
+
+function dismissSuccessModal() {
+  document.getElementById('successOverlay').style.display = 'none';
+}
+
+/* ─── Settings sheet ──────────────────────────── */
+function openSettings() {
+  document.getElementById('inputStation').value = settings.station;
+  document.getElementById('inputSpending').value = settings.spending || '';
+  document.getElementById('settingsOverlay').classList.add('visible');
+  document.getElementById('settingsSheet').classList.add('visible');
+}
+
+function closeSettings() {
+  document.getElementById('settingsOverlay').classList.remove('visible');
+  document.getElementById('settingsSheet').classList.remove('visible');
+}
+
+function saveSettings() {
+  settings.station  = document.getElementById('inputStation').value.trim();
+  settings.spending = parseInt(document.getElementById('inputSpending').value) || 0;
+  // Reset plan selection so recommendation recalculates
+  selectedPlanId = null;
+  closeSettings();
+  renderLanding();
+  // Sync slider and plan cards
+  const slider = document.getElementById('spendingSlider');
+  slider.value = settings.spending;
+  updateSliderTrack(slider);
+  renderSimCard();
+  selectedPlanId = recommendedPlan().id;
+  renderPlanCards(true);
+}
+
+/* ─── Slider ──────────────────────────────────── */
+function updateSliderTrack(slider) {
+  const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+  slider.style.background =
+    `linear-gradient(to right, var(--brand-default) ${pct}%, var(--border-default) ${pct}%)`;
+}
+
+function onSliderChange(slider) {
+  const value = parseInt(slider.value);
+  settings.spending = value;
+  updateSliderTrack(slider);
+  document.getElementById('simSpendingVal').innerHTML =
+    `¥${value.toLocaleString('ja-JP')}<span>/ 月</span>`;
+  // Selection follows recommendation automatically as spending changes
+  selectedPlanId = recommendedPlan().id;
+  renderPlanCards(true); // true = animate if order changed
+}
+
+/* ─── Render: Landing ─────────────────────────── */
+function renderLanding() {
+  const rec = recommendedPlan();
+  const savings = estimatedSavings(rec);
+
+  document.getElementById('landingPlanName').textContent = rec.name;
+
+  document.getElementById('landingHeadline').innerHTML =
+    `30日間 ${fmt(rec.price)}で<br>運賃が毎日${rec.discountRate * 100}%割引`;
+
+  const bullets = [
+    `毎日運賃${rec.discountRate * 100}%割引（割引上限 ${fmt(rec.cap)}）`,
+    `JRE POINTボーナス${rec.pointBonus > 0 ? ' +' + rec.pointBonus + '%還元' : '：なし'}`,
+  ];
+  if (savings !== null) {
+    bullets.push(`あなたの推定節約額 月約${fmt(savings)}`);
+  }
+  document.getElementById('landingBullets').innerHTML =
+    bullets.map(b => `<li>${b}</li>`).join('');
+
+  const others = PLANS.filter(p => p.id !== rec.id);
+  document.getElementById('landingOtherPlans').innerHTML = others.map(p => {
+    const s = estimatedSavings(p);
+    return `
+      <div class="plan-row">
+        <div class="plan-row__left">
+          <div class="plan-row__name">${p.name}</div>
+          <div class="plan-row__desc">
+            毎日${p.discountRate * 100}%割引・上限${fmt(p.cap)}<br>
+            JRE POINT${p.pointBonus > 0 ? ' +' + p.pointBonus + '%ボーナス' : 'ボーナスなし'}
+          </div>
+        </div>
+        <div class="plan-row__right">
+          <div class="plan-row__price">${fmt(p.price)} / 月</div>
+          ${s !== null ? `<div class="plan-row__savings">月約${fmt(s)}節約</div>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ─── Render: Simulation card ─────────────────── */
+function renderSimCard() {
+  // Update station display
+  const stationEl = document.getElementById('simStation');
+  if (settings.station) {
+    stationEl.textContent = settings.station;
+    stationEl.classList.remove('sim-card__station-value--placeholder');
+  } else {
+    stationEl.textContent = '設定する';
+    stationEl.classList.add('sim-card__station-value--placeholder');
+  }
+  // Update spending display
+  document.getElementById('simSpendingVal').innerHTML =
+    `¥${settings.spending.toLocaleString('ja-JP')}<span>/ 月</span>`;
+}
+
+/* ─── Plan card HTML builder ──────────────────── */
+function buildCardsHtml(sortedPlans, rec) {
+  return sortedPlans.map(plan => {
+    const isRec      = plan.id === rec.id;
+    const isSelected = plan.id === selectedPlanId;
+    const savings    = estimatedSavings(plan);
+    const planNet    = savings !== null ? savings - plan.price : null;
+
+    const simHtml = planNet !== null
+      ? `
+        <div class="plan-card__divider"></div>
+        <div class="plan-card__sim">
+          <div>
+            <div class="plan-card__sim-label">月々の純節約額</div>
+            <div class="plan-card__sim-sublabel">割引額 − プラン料金</div>
+          </div>
+          <div class="plan-card__sim-amount">
+            <span class="plan-card__sim-value">${planNet >= 0 ? '+' : ''}${fmt(planNet)}</span>
+            <span class="plan-card__sim-unit">/ 月</span>
+          </div>
+        </div>
+      `
+      : `
+        <div class="plan-card__divider"></div>
+        <div class="plan-card__no-data">
+          スライダーで月の電車賃を設定すると節約額がわかります
+        </div>
+      `;
+
+    return `
+      <div class="plan-card-outer">
+        <div class="plan-card${isSelected ? ' selected' : ''}" onclick="selectPlan('${plan.id}')">
+          <div class="plan-card__header">
+            <div class="plan-card__header-left">
+              ${isRec ? '<div class="plan-card__rec-badge">おすすめ</div>' : ''}
+              <div class="plan-card__name">${plan.name}</div>
+            </div>
+            <div class="plan-card__price">
+              ${fmt(plan.price)}<span class="plan-card__price-unit"> / 月</span>
+            </div>
+          </div>
+          <div class="plan-card__divider"></div>
+          <div class="plan-card__details">
+            <div class="plan-card__detail-row">
+              <span>基本割引</span>
+              <span class="plan-card__detail-val">${plan.discountRate * 100}%</span>
+            </div>
+            <div class="plan-card__detail-row">
+              <span>JRE POINTボーナス</span>
+              <span class="${plan.pointBonus > 0 ? 'plan-card__detail-val' : 'plan-card__detail-val--none'}">
+                ${plan.pointBonus > 0 ? '+' + plan.pointBonus + '%' : 'なし'}
+              </span>
+            </div>
+          </div>
+          ${simHtml}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ─── Render: Plan cards ──────────────────────── */
+let _lastRecId = null; // track previous recommendation to detect order change
+
+function renderPlanCards(animate = false) {
+  const rec = recommendedPlan();
+  const sortedPlans = [rec, ...PLANS.filter(p => p.id !== rec.id)];
+  const orderChanged = rec.id !== _lastRecId;
+
+  if (animate && orderChanged && _lastRecId !== null) {
+    _shuffleCards(sortedPlans, rec);
+  } else {
+    _lastRecId = rec.id;
+    document.getElementById('planCardsList').innerHTML = buildCardsHtml(sortedPlans, rec);
+  }
+}
+
+function _shuffleCards(sortedPlans, rec) {
+  const container = document.getElementById('planCardsList');
+  const existing  = Array.from(container.children);
+
+  // Phase 1: animate current cards out (fade + slide up)
+  existing.forEach((el, i) => {
+    el.style.transition = `opacity 0.1s ease ${i * 25}ms, transform 0.1s ease ${i * 25}ms`;
+    el.style.opacity   = '0';
+    el.style.transform = 'translateY(-10px)';
+  });
+
+  const outDuration = 100 + existing.length * 25;
+
+  setTimeout(() => {
+    _lastRecId = rec.id;
+    container.innerHTML = buildCardsHtml(sortedPlans, rec);
+
+    // Phase 2: stagger each new card in
+    Array.from(container.children).forEach((el, i) => {
+      el.style.animationDelay = `${i * 70}ms`;
+      el.classList.add('card-animate-in');
+    });
+  }, outDuration);
+}
+
+function selectPlan(id) {
+  selectedPlanId = id;
+  renderPlanCards(); // no animation on manual tap
+}
+
+/* ─── Render: Confirm ─────────────────────────── */
+function renderConfirm() {
+  const plan    = currentPlan();
+  const station = settings.station || '（未設定）';
+
+  // Subscription period: 12 months from today
+  const today = new Date(2026, 3, 12); // April 12, 2026
+  const end   = new Date(today);
+  end.setFullYear(end.getFullYear() + 1);
+  end.setDate(end.getDate() - 1);
+  const fmtDate = d => `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+
+  const editIconHtml = `
+    <button class="confirm-row__edit" aria-label="編集">
+      <img src="../../Icons/edit.svg" alt="" />
+    </button>
+  `;
+
+  const rows = [
+    { label: 'プラン',             value: plan.name },
+    { label: '月額料金',           value: fmt(plan.price) },
+    { label: 'サブスク指定駅',     value: station, edit: true },
+    { label: '紐付けるSuica情報',  value: CARD_LABEL, sub: CARD_NUMBER, edit: true },
+    { label: '決済方法',           value: 'クレジットカード', sub: '****-****-1234 (01/29)', edit: true },
+    { label: '次日更新日',         value: '2026/05/12（火）' },
+    { label: '利用可能期間',       value: '全日' },
+    { label: '発売期間',           value: `${fmtDate(today)}〜${fmtDate(end)}` },
+  ];
+
+  document.getElementById('confirmList').innerHTML = rows.map(r => `
+    <div class="confirm-row">
+      <div class="confirm-row__left">
+        <div class="confirm-row__label">${r.label}</div>
+        <div class="confirm-row__value">${r.value}</div>
+        ${r.sub ? `<div class="confirm-row__sub">${r.sub}</div>` : ''}
+      </div>
+      ${r.edit ? editIconHtml : ''}
+    </div>
+  `).join('');
+}
+
+/* ─── Render: Success ─────────────────────────── */
+function renderSuccess() {
+  const plan = currentPlan();
+  document.getElementById('mysubPlanName').textContent = plan.name;
+  document.getElementById('successTitle').innerHTML = `${plan.name}を<br>契約しました`;
+}
+
+/* ─── Init ────────────────────────────────────── */
+renderLanding();
+// Initialize slider track fill
+const _slider = document.getElementById('spendingSlider');
+_slider.value = settings.spending;
+updateSliderTrack(_slider);
+</script>
+
+</body>
+</html>

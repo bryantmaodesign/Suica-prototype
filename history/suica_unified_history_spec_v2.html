@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suica — Unified History Page Spec</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green:      #00A550;
+    --green-bg:   #E8F7EF;
+    --amber:      #B87400;
+    --amber-bg:   #FFF4DC;
+    --blue:       #1060A0;
+    --blue-bg:    #E3EEF8;
+    --red:        #C0392B;
+    --red-bg:     #FDECEA;
+    --purple:     #5340C0;
+    --purple-bg:  #EEEBFA;
+    --gray:       #606060;
+    --gray-bg:    #F0F0F0;
+    --border:     #E2E2E2;
+    --bg:         #F7F7F5;
+    --white:      #FFFFFF;
+    --text:       #1A1A1A;
+    --muted:      #666666;
+    --header-bg:  #0A1628;
+    --section-bg: #1A2A40;
+  }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 40px 32px;
+  }
+
+  .page-header {
+    margin-bottom: 16px;
+    border-left: 4px solid var(--green);
+    padding-left: 16px;
+  }
+  .page-header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 4px; }
+  .page-header p  { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  .gap-banner {
+    margin: 16px 0 24px;
+    padding: 14px 16px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--amber);
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  .gap-banner strong {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--amber);
+    margin-bottom: 8px;
+  }
+  .gap-row { display: flex; gap: 8px; align-items: baseline; margin-bottom: 3px; }
+  .gap-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); min-width: 60px; }
+
+  .legend {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    padding: 12px 16px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+
+  .table-wrap {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead tr { background: var(--header-bg); }
+  thead th {
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .section-row td {
+    background: var(--section-bg);
+    color: rgba(255,255,255,0.82);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 7px 14px;
+  }
+
+  tbody tr:not(.section-row) { border-bottom: 1px solid var(--border); transition: background 0.12s; }
+  tbody tr:not(.section-row):hover { background: #FAFAF8; }
+  tbody tr:last-child { border-bottom: none; }
+
+  td { padding: 11px 14px; vertical-align: top; }
+
+  .field-name { font-weight: 700; font-size: 12px; color: var(--text); margin-bottom: 2px; }
+  .field-jp   { font-size: 11px; color: var(--muted); }
+  .field-sf   { font-size: 10px; font-family: 'DM Mono', monospace; color: #888; margin-top: 3px; }
+
+  .desc    { font-size: 12px; color: #444; line-height: 1.6; }
+  .example { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: 4px; }
+  .note    { font-size: 11px; color: var(--muted); line-height: 1.55; }
+
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .badge-must    { background: var(--green-bg);  color: var(--green); }
+  .badge-should  { background: var(--amber-bg);  color: var(--amber); }
+  .badge-could   { background: var(--blue-bg);   color: var(--blue); }
+  .badge-filter  { background: var(--purple-bg); color: var(--purple); }
+  .badge-detail  { background: var(--gray-bg);   color: var(--gray); }
+  .badge-new     { background: #FFF0F8; color: #A02070; border: 1px solid #F0C0DC; }
+  .badge-carried { background: var(--gray-bg);   color: var(--gray); }
+
+  .row-new td { background: #FFFAFC; border-left: 3px solid #E070B0; }
+
+  .open-q {
+    padding: 14px 16px;
+    background: #FFF8F8;
+    border: 1px solid #F0DADA;
+    border-radius: 8px;
+    font-size: 11px;
+    color: #904040;
+    font-family: 'DM Mono', monospace;
+    line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Unified History — Content Spec v2</h1>
+  <p>統合履歴ページ &nbsp;·&nbsp; SF view gap-checked + JRE POINT added &nbsp;·&nbsp; March 2026</p>
+</div>
+
+<div class="gap-banner">
+  <strong>SF screen gap check — 2 types were missing from the previous spec</strong>
+  <div class="gap-row"><span class="badge badge-carried" style="font-size:10px">Covered</span> 入/出 — JR rail transit tap-in/tap-out</div>
+  <div class="gap-row"><span class="badge badge-carried" style="font-size:10px">Covered</span> 物販 — e-money purchase at stores</div>
+  <div class="gap-row"><span class="badge badge-carried" style="font-size:10px">Covered</span> カード — credit card charge (モバイル)</div>
+  <div class="gap-row"><span class="badge badge-new" style="font-size:10px">Added ↓</span> バス等 — bus and non-JR transit (e.g. フジエク, 神奈中, 西東京B)</div>
+  <div class="gap-row"><span class="badge badge-new" style="font-size:10px">Added ↓</span> ＊入 — special fare entry flag (Shinkansen, inter-area transfer, or surcharge trip)</div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><span class="badge badge-must">Must</span> Required for v1</div>
+  <div class="legend-item"><span class="badge badge-should">Should</span> High value</div>
+  <div class="legend-item"><span class="badge badge-could">Could</span> Post-v1</div>
+  <div class="legend-item"><span class="badge badge-filter">Filter</span> Filter / sort control</div>
+  <div class="legend-item"><span class="badge badge-detail">Detail</span> Tap to expand</div>
+  <div class="legend-item"><span class="badge badge-new">New</span> Added vs previous spec</div>
+</div>
+
+<!-- TABLE 1: ROW DATA -->
+<div class="table-wrap">
+<table>
+  <thead><tr>
+    <th style="width:22%">Field / Element</th>
+    <th style="width:40%">What it shows</th>
+    <th style="width:95px;text-align:center">Priority</th>
+    <th>Notes</th>
+  </tr></thead>
+  <tbody>
+
+    <tr class="section-row"><td colspan="4">Transaction row — core fields (always visible in list)</td></tr>
+
+    <tr>
+      <td><div class="field-name">Type icon</div><div class="field-jp">種別アイコン</div><div class="field-sf">SF: 種別 column</div></td>
+      <td class="desc">Icon + color per transaction type. Replaces the current text-only 種別 column (入/出, 物販, カード, バス等). Lets users scan without reading each row.</td>
+      <td style="text-align:center"><span class="badge badge-must">Must</span></td>
+      <td class="note">Icon + label, not icon alone. Color must not be the only differentiator (accessibility).</td>
+    </tr>
+    <tr>
+      <td><div class="field-name">Date &amp; time</div><div class="field-jp">日時</div><div class="field-sf">SF: 月日 column</div></td>
+      <td class="desc">Date and time of transaction. Current app shows date only (月日). Adding time allows users to reconstruct their day accurately.</td>
+      <td style="text-align:center"><span class="badge badge-must">Must</span></td>
+      <td class="note">Group rows by date with a sticky date header. Show relative time ("2時間前") for same-day items.</td>
+    </tr>
+    <tr>
+      <td><div class="field-name">Primary label</div><div class="field-jp">店舗名 / 駅名</div><div class="field-sf">SF: 利用場所 column</div></td>
+      <td class="desc">For transit: "新宿 → 渋谷". For e-money: real merchant name (e.g. "NewDays 新宿東口") — not 物販. For charge: "クレジットカード チャージ". For points: reason (e.g. "乗車ポイント" or "ポイント交換").</td>
+      <td style="text-align:center"><span class="badge badge-must">Must</span></td>
+      <td class="note">Merchant name improvement is already live in the current app. Points label is new.</td>
+    </tr>
+    <tr>
+      <td><div class="field-name">Amount</div><div class="field-jp">金額 / ポイント数</div><div class="field-sf">SF: 差額 column</div></td>
+      <td class="desc">Yen amount (−¥405) for SF transactions. Point amount (＋12pt) for JRE POINT events. Use red for deductions, green for additions. Show unit clearly (¥ vs pt).</td>
+      <td style="text-align:center"><span class="badge badge-must">Must</span></td>
+      <td class="note">Mixed units (¥ and pt) in one list — always show the unit label, never a bare number.</td>
+    </tr>
+    <tr>
+      <td><div class="field-name">Balance after</div><div class="field-jp">残高</div><div class="field-sf">SF: 残高 column</div></td>
+      <td class="desc">Suica balance remaining after this transaction. For JRE POINT rows, show point balance after. Two balance types — display the one relevant to the row type.</td>
+      <td style="text-align:center"><span class="badge badge-must">Must</span></td>
+      <td class="note">Current app shows this as 残高差額 (balance + diff in one cell). Split into two distinct fields for clarity.</td>
+    </tr>
+
+    <tr class="section-row"><td colspan="4">Transaction types — all types from SF screen + new unified types</td></tr>
+
+    <tr>
+      <td><div class="field-name">JR rail transit</div><div class="field-jp">鉄道乗車</div><div class="field-sf">SF: 入 / 出</div></td>
+      <td class="desc">IC gate tap-in (入) and tap-out (出). Show as a single merged row: "新宿 → 渋谷" with fare. Current SF screen splits this into two rows which is hard to read.</td>
+      <td style="text-align:center"><span class="badge badge-must">Must</span></td>
+      <td class="note">Merge 入/出 into one row in the redesign. Show off-peak discount (オフピーク割引) if applied.</td>
+    </tr>
+    <tr>
+      <td><div class="field-name">e-money purchase</div><div class="field-jp">電子マネー利用</div><div class="field-sf">SF: 物販</div></td>
+      <td class="desc">Suica payment at stores, vending machines, kiosks. Show real merchant name. If merchant name is unavailable, fall back to 物販 — do not show blank.</td>
+      <td style="text-align:center"><span class="badge badge-must">Must</span></td>
+      <td class="note">Merchant name already live in current app per function table rank 4.</td>
+    </tr>
+    <tr>
+      <td><div class="field-name">Credit card charge</div><div class="field-jp">クレジットチャージ</div><div class="field-sf">SF: カード / モバイル</div></td>
+      <td class="desc">Manual top-up via linked credit card. Amount added shown as positive (e.g. ＋¥5,000). Source label: "カードチャージ" or "オートチャージ" to distinguish manual vs automatic.</td>
+      <td style="text-align:center"><span class="badge badge-must">Must</span></td>
+      <td class="note">Distinguish manual charge vs auto-charge — different triggers, user needs to know which fired.</td>
+    </tr>
+    <tr class="row-new">
+      <td><div class="field-name">Bus &amp; non-JR transit</div><div class="field-jp">バス・他社交通</div><div class="field-sf">SF: バス等</div></td>
+      <td class="desc">Suica tap on buses and non-JR operators (e.g. Toei, private railways, community buses). Current SF shows operator code (e.g. "フジエク", "神奈中", "西東京B"). Redesign should show operator name in full where possible.</td>
+      <td style="text-align:center"><span class="badge badge-must">Must</span></td>
+      <td class="note"><span class="badge badge-new">New</span> Was missing from previous spec. Seen in every screenshot — common transaction type.</td>
+    </tr>
+    <tr class="row-new">
+      <td><div class="field-name">Special fare / Shinkansen</div><div class="field-jp">新幹線・特殊入場</div><div class="field-sf">SF: ＊入</div></td>
+      <td class="desc">The ＊ prefix in current SF history flags special entry: Shinkansen IC boarding, inter-area transfers, or surcharge routes. Redesign should surface the reason clearly rather than a cryptic asterisk.</td>
+      <td style="text-align:center"><span class="badge badge-must">Must</span></td>
+      <td class="note"><span class="badge badge-new">New</span> Was missing from previous spec. ＊ is unclear to users — label it explicitly (e.g. "新幹線 自由席").</td>
+    </tr>
+    <tr class="row-new">
+      <td><div class="field-name">JRE POINT earned</div><div class="field-jp">ポイント獲得</div><div class="field-sf">SF: —（not shown）</div></td>
+      <td class="desc">
+        Points earned are shown as a sub-row attached directly below their triggering transaction — not as a separate floating entry. This makes the cause-and-effect visible: "I rode → I earned."
+        <br><br>
+        <strong>Trigger rules:</strong><br>
+        ・JR rail ride → 乗車ポイント (ride points, typically 6pt per ¥200 fare)<br>
+        ・e-money purchase at partner store → 購買ポイント (purchase points)<br>
+        ・View Card payment (credit card charge event) → カード利用ポイント<br>
+        ・Off-peak ride → オフピークポイント (bonus on top of base ride points)<br>
+        ・Commuter pass purchase → 定期券購入ポイント<br>
+        <br>
+        If points arrive with a processing delay (batch), the sub-row appears as "pending" (獲得予定) until confirmed.
+      </td>
+      <td style="text-align:center"><span class="badge badge-must">Must</span></td>
+      <td class="note"><span class="badge badge-new">New</span> Sub-row pattern keeps the list clean while showing points in context. Pending state handles JRE batch delay gracefully.</td>
+    </tr>
+    <tr class="row-new">
+      <td><div class="field-name">JRE POINT redeemed</div><div class="field-jp">ポイント交換・利用</div><div class="field-sf">SF: —（not shown）</div></td>
+      <td class="desc">
+        Points redeemed appear as a standalone row (no parent transaction) since redemption is a deliberate user action, not a side-effect of another event.
+        <br><br>
+        <strong>Trigger rules:</strong><br>
+        ・ポイントでSuicaチャージ → shows −Xpt and ＋¥X charge received<br>
+        ・グリーン券をポイントで購入 → shows −Xpt and ticket detail<br>
+        ・JRE MALL / partner reward → shows −Xpt and reward name
+      </td>
+      <td style="text-align:center"><span class="badge badge-must">Must</span></td>
+      <td class="note"><span class="badge badge-new">New</span> Standalone because redemption is user-initiated, not triggered by a Suica transaction.</td>
+    </tr>
+    <tr>
+      <td><div class="field-name">Commuter pass purchase</div><div class="field-jp">定期券購入・更新</div><div class="field-sf">SF: 定期（rare）</div></td>
+      <td class="desc">Purchase or renewal of a commuter pass. Infrequent but high value when it occurs. Show route, validity period, and amount paid.</td>
+      <td style="text-align:center"><span class="badge badge-should">Should</span></td>
+      <td class="note">Distinct icon (pass card). Renewal reminder could link from here.</td>
+    </tr>
+    <tr>
+      <td><div class="field-name">Green car ticket</div><div class="field-jp">グリーン券購入</div><div class="field-sf">SF: —（app purchase）</div></td>
+      <td class="desc">In-app purchase of a green car ticket. Show route, travel date, amount (¥ or pt). Links to function table rank 5.</td>
+      <td style="text-align:center"><span class="badge badge-should">Should</span></td>
+      <td class="note">Show whether paid in yen or JRE POINT.</td>
+    </tr>
+    <tr>
+      <td><div class="field-name">Coupon / ticket use</div><div class="field-jp">クーポン・チケット利用</div><div class="field-sf">SF: —（not shown）</div></td>
+      <td class="desc">When a limited-time coupon or ticket was redeemed. Show coupon name, merchant, discount amount saved.</td>
+      <td style="text-align:center"><span class="badge badge-should">Should</span></td>
+      <td class="note">Reinforces value — user can see cumulative savings over time.</td>
+    </tr>
+
+    <tr class="section-row"><td colspan="4">Filtering controls</td></tr>
+
+    <tr>
+      <td><div class="field-name">Type filter chips</div><div class="field-jp">種別フィルター</div></td>
+      <td class="desc">Horizontal scrollable chips: All / 鉄道 / バス / お買い物 / チャージ / ポイント / 定期・チケット. Defaults to All.</td>
+      <td style="text-align:center"><span class="badge badge-filter">Filter</span></td>
+      <td class="note">Chip row is standard on iOS. No equivalent in current app.</td>
+    </tr>
+    <tr>
+      <td><div class="field-name">Date range filter</div><div class="field-jp">期間フィルター</div></td>
+      <td class="desc">Presets: 今週 / 今月 / 3ヶ月. Custom date picker for expense reporting use cases. Show monthly spend total when a monthly filter is active.</td>
+      <td style="text-align:center"><span class="badge badge-filter">Filter</span></td>
+      <td class="note">Monthly total at top of filtered view is useful for household budgeting.</td>
+    </tr>
+    <tr>
+      <td><div class="field-name">Card selector</div><div class="field-jp">カード切替</div></td>
+      <td class="desc">Toggle between Suica cards if user has multiple (e.g. phone + Apple Watch). Defaults to primary card.</td>
+      <td style="text-align:center"><span class="badge badge-filter">Filter</span></td>
+      <td class="note">Ties to multi-card carousel (function table rank 19).</td>
+    </tr>
+    <tr>
+      <td><div class="field-name">Keyword search</div><div class="field-jp">キーワード検索</div></td>
+      <td class="desc">Search by station name or merchant name. Find a specific transaction quickly.</td>
+      <td style="text-align:center"><span class="badge badge-could">Could</span></td>
+      <td class="note">Post-v1. Not in current app.</td>
+    </tr>
+
+    <tr class="section-row"><td colspan="4">Detail view — shown when user taps a row</td></tr>
+
+    <tr>
+      <td><div class="field-name">Full route &amp; time</div><div class="field-jp">乗車詳細</div></td>
+      <td class="desc">Full station names, tap-in/tap-out time, line name, fare breakdown. Useful for expense claims.</td>
+      <td style="text-align:center"><span class="badge badge-detail">Detail</span></td>
+      <td class="note">Current SF shows truncated station names (e.g. "地麻布十" for 麻布十番). Full name in detail view.</td>
+    </tr>
+    <tr>
+      <td><div class="field-name">Points earned on this trip</div><div class="field-jp">この取引で獲得したポイント</div></td>
+      <td class="desc">JRE POINT earned from this specific transaction. Only shown if points were earned. Reinforces the loyalty loop.</td>
+      <td style="text-align:center"><span class="badge badge-detail">Detail</span></td>
+      <td class="note">Links to JRE POINT balance screen.</td>
+    </tr>
+    <tr>
+      <td><div class="field-name">Discount applied</div><div class="field-jp">割引・特典</div></td>
+      <td class="desc">Off-peak discount, coupon applied, commuter pass coverage. Show original fare vs discounted fare.</td>
+      <td style="text-align:center"><span class="badge badge-detail">Detail</span></td>
+      <td class="note">Off-peak discount is increasingly common — makes the saving visible.</td>
+    </tr>
+    <tr>
+      <td><div class="field-name">Export / receipt</div><div class="field-jp">明細出力</div></td>
+      <td class="desc">Share or export individual transaction as PDF or image for expense submission.</td>
+      <td style="text-align:center"><span class="badge badge-could">Could</span></td>
+      <td class="note">Post-v1. High value for business users.</td>
+    </tr>
+
+  </tbody>
+</table>
+</div>
+
+<div class="open-q">
+  ✓ Resolved: JRE POINT earned rows attach to their triggering transaction as a sub-row. Pending state (獲得予定) handles batch processing delay. Redemption rows are standalone since they are user-initiated, not triggered by a Suica event.
+  <br><br>
+  ⚑ Remaining open question: Should the points sub-row be visible by default on every row, or collapsed and only shown when the user taps the parent? Always-visible is better for discoverability but makes the list denser for commuters who don't care about points.
+</div>
+
+</body>
+</html>
